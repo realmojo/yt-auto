@@ -65,7 +65,7 @@ export default function RootLayout({
           rel="stylesheet"
           // React 19 hoists this stylesheet <link> into <head> automatically
           precedence="default"
-          href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
         />
         <ThemeProvider>{children}</ThemeProvider>
       </body>

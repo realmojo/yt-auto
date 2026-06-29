@@ -97,16 +97,21 @@ function buildAss(segments) {
   return head + segments.filter((s) => (s.text || "").trim()).map((s) => `Dialogue: 0,${assTime(s.start)},${assTime(s.end)},Sub,,0,0,0,,${s.text.replace(/\s+/g, " ").trim()}`).join("\n") + "\n";
 }
 
-const HEADER_PX = Math.round(H * 0.255); // 490 — 흰 헤더(로고+제목)
-const FOOTER_PX = Math.round(H * 0.8); //  1536 — 하단 흰밴드 시작
-const AREA_H = FOOTER_PX - HEADER_PX; //   1046 — 영상이 채울 높이
+// 1:1 정사각 영상을 프레임 정중앙에: 상단 흰 420 / 영상 1080×1080 / 하단 흰 420
+const HEADER_PX = Math.round((H - W) / 2); // 420 — 상단 흰 헤더(로고+제목)
+const AREA_H = W; //                          1080 — 영상(정사각, 전체폭)
+const FOOTER_PX = HEADER_PX + AREA_H; //      1500 — 하단 흰밴드 시작
 
 async function composeOne(page, input, output) {
   const title = titleFromFilename(input);
   // 콘텐츠 영역(레터박스 제외) 감지 → 잘라내 헤더~하단밴드 사이를 꽉 채운다
-  const content = (await detectContent(input)) || { y: 0, h: H };
-  // 헤더를 콘텐츠 위로 살짝 겹쳐(0.36) 원본 영상의 자체 제목/어두운 바를 가린다
-  const pngB64 = await renderOverlay(page, title, 0.8, 0.36);
+  const content0 = (await detectContent(input)) || { y: 0, h: H };
+  // 원본 상단에 박힌 자막을 잘라낸다(정사각 헤더 420은 못 가림). CAP_CROP(0~0.4)로 조정, 기본 0.25.
+  const capFrac = Math.min(0.4, Math.max(0, Number(process.env.CAP_CROP ?? 0.25)));
+  const cap = Math.round(content0.h * capFrac);
+  const content = { y: content0.y + cap, h: content0.h - cap };
+  // 헤더/푸터를 영상 정사각 위·아래 흰 영역(각 420px)에 맞춘다
+  const pngB64 = await renderOverlay(page, title, FOOTER_PX / H, HEADER_PX / H);
 
   let segments = [];
   if (useStt) {
@@ -147,6 +152,8 @@ async function main() {
   const entries = await readdir(folder);
   const videos = [];
   for (const e of entries) {
+    // yt-dlp 다운로드 중간 산출물(.part, 스트림별 .f137.mp4 등)은 제외 — 완성 파일만
+    if (/\.part$/i.test(e) || /\.f\d+\.(mp4|m4a|webm|mkv)$/i.test(e)) continue;
     if (VIDEO_EXT.has(extname(e).toLowerCase())) {
       const p = join(folder, e);
       if ((await stat(p)).isFile()) videos.push(p);

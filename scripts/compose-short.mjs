@@ -156,15 +156,22 @@ async function main() {
   console.log(`⏱  길이: ${dur.toFixed(1)}초`);
 
   // 영상 콘텐츠 영역(레터박스 제외) 감지 → 잘라내 헤더~하단밴드 사이를 꽉 채운다
-  const content = (await detectContent(input)) || { y: 0, h: H };
-  const HEADER_PX = Math.round(H * 0.255); // 490 — 흰 헤더(로고+제목)
-  const FOOTER_PX = Math.round(H * 0.8); //  1536 — 하단 흰밴드 시작
-  const AREA_H = FOOTER_PX - HEADER_PX; //   1046 — 영상이 채울 높이
-  console.log(`📐 콘텐츠 ${content.y}~${content.y + content.h}px → 영상영역 ${HEADER_PX}~${FOOTER_PX}px 채움`);
+  const content0 = (await detectContent(input)) || { y: 0, h: H };
+  // 원본 상단에 박힌 자막(예: "차별 받았다는 중국인")을 잘라낸다.
+  // 정사각 헤더(420)는 이 자막을 못 가리므로, 콘텐츠 상단 일부를 떼어내 정사각을 채운다(약간 확대됨).
+  // 비율은 영상마다 다를 수 있어 CAP_CROP 환경변수(0~0.4)로 조정 가능. 기본 0.25.
+  const capFrac = Math.min(0.4, Math.max(0, Number(process.env.CAP_CROP ?? 0.25)));
+  const cap = Math.round(content0.h * capFrac);
+  const content = { y: content0.y + cap, h: content0.h - cap };
+  // 1:1 정사각 영상을 프레임 정중앙에: 상단 흰 420 / 영상 1080×1080 / 하단 흰 420
+  const HEADER_PX = Math.round((H - W) / 2); // 420 — 상단 흰 헤더(로고+제목)
+  const AREA_H = W; //                          1080 — 영상(정사각, 전체폭)
+  const FOOTER_PX = HEADER_PX + AREA_H; //      1500 — 하단 흰밴드 시작
+  console.log(`📐 콘텐츠 ${content0.y}~${content0.y + content0.h}px · 상단자막 ${cap}px 크롭 → 영상영역 ${HEADER_PX}~${FOOTER_PX}px 채움`);
 
   console.log("🖼  해숏티 오버레이 렌더 중…");
-  // 헤더를 콘텐츠 위로 살짝 겹쳐(0.36) 원본 영상의 자체 제목/어두운 바를 가린다
-  const pngB64 = await renderOverlay(title, 0.8, 0.36);
+  // 헤더/푸터를 영상 정사각 위·아래 흰 영역(각 420px)에 맞춘다
+  const pngB64 = await renderOverlay(title, FOOTER_PX / H, HEADER_PX / H);
 
   let segments = [];
   if (!noStt) {

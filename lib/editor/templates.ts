@@ -141,14 +141,16 @@ export const TEMPLATES: EditorTemplate[] = [
           width: Math.round(W * 0.88),
           height: Math.round(H * 0.06),
           fontSize: DEFAULT_TITLE_FONT,
-          fontWeight: 800,
-          fontFamily: '"Black Han Sans", "Noto Sans KR", sans-serif',
+          fontWeight: 400,
+          fontFamily: '"Do Hyeon", "Noto Sans KR", sans-serif',
           color: "#111111",
           align: "center",
           vAlign: "middle",
           lineHeight: 1.15,
           background: null,
           shadow: false,
+          // Do Hyeon 은 단일 굵기 → 같은 색 외곽선으로 글자를 살짝 두껍게
+          stroke: { color: "#111111", width: Math.round(W * 0.004) },
           duration,
         }),
         // 영상 중앙 자막 (흰색 + 검정 외곽선)

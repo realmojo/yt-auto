@@ -37,9 +37,11 @@ export default function OverlayPage() {
       const controller = new MediaController();
       controller.ensure(project, []);
       await controller.waitReady(8000); // 프로필 로고 등 이미지 로드 대기
-      // 제목 폰트(Black Han Sans) 로드 완료까지 대기 — 폴백 폰트 렌더 방지
+      // 제목 폰트(Do Hyeon) 로드 완료까지 대기 — 폴백 폰트 렌더 방지.
+      // Google Fonts 한글은 unicode-range 서브셋으로 쪼개져 있어, 실제 제목
+      // 텍스트를 함께 넘겨야 그 글자들이 속한 서브셋까지 모두 받아온다.
       try {
-        await document.fonts.load('400 120px "Black Han Sans"');
+        await document.fonts.load('400 120px "Do Hyeon"', title);
         await document.fonts.ready;
       } catch {
         /* 폰트 로드 실패해도 진행 */

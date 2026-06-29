@@ -70,13 +70,21 @@ export function buildOverlayProject(
   const tpl = TEMPLATES.find((t) => t.id === "haesyotti-reels");
   const ctx = templateContext({ ...base, duration: durationSec });
   const footerY = Math.round(base.height * footerYFrac);
-  // 헤더 밴드는 영상 콘텐츠 시작점(상단 레터박스)까지 내려 검정을 덮는다. 최소 기본 높이 보장.
-  const headerH = Math.max(
-    Math.round(base.height * 0.255),
-    Math.round(base.height * headerYFrac),
+  // 헤더 밴드 높이: headerYFrac 가 주어지면 그 값을 그대로(정사각 레이아웃은 420px),
+  // 없으면 기본 0.255.
+  const headerH =
+    headerYFrac > 0
+      ? Math.round(base.height * headerYFrac)
+      : Math.round(base.height * 0.255);
+  // 제목은 로고 바로 아래부터 헤더 하단까지 채운다 — 헤더가 작아도(정사각) 안에 들어가도록.
+  const logoBottom =
+    Math.round(base.height * 0.03) + Math.round(base.width * 0.12);
+  const titleMargin = Math.round(base.height * 0.012);
+  const titleY = logoBottom + titleMargin;
+  const titleH = Math.max(
+    Math.round(base.height * 0.08),
+    headerH - titleY - titleMargin,
   );
-  const titleH = Math.round(base.height * 0.13);
-  const titleY = Math.max(Math.round(base.height * 0.155), headerH - titleH);
   const clips = (tpl ? tpl.build(ctx) : [])
     .filter((c) => !OVERLAY_OMIT.has(c.name))
     .map((c) => {

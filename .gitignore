@@ -40,3 +40,8 @@ youtube_shorts/*
 
 # media
 *.mp4
+
+# youtube oauth
+scripts/client_secret.json
+scripts/.youtube-token.json
+output/.yt-upload-state.json

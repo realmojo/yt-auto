@@ -132,9 +132,14 @@ type ScriptRequest = {
 };
 
 const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://localhost:11434";
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "qwen3:30b-a3b";
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL ?? "gemma3:latest";
 
-/* qwen3은 thinking이 본문의 3~5배 토큰을 먼저 소모하므로 분량별로 충분히 */
+/* thinking(추론 분리) 지원 모델만 think:true. gemma3 등 미지원 모델에 true면 Ollama가 400. */
+const OLLAMA_THINK = process.env.OLLAMA_THINK
+  ? process.env.OLLAMA_THINK === "true"
+  : /qwen3|deepseek-r1|exaone-deep|magistral/i.test(OLLAMA_MODEL);
+
+/* thinking 모델은 본문의 3~5배 토큰을 먼저 소모하므로 분량별로 충분히 */
 const OLLAMA_PREDICT: Record<string, number> = {
   "3": 9000,
   "8": 13000,
@@ -233,11 +238,11 @@ export async function POST(request: NextRequest) {
             { role: "user", content: userPrompt },
           ],
           stream: true,
-          // think:false 는 추론이 영어로 본문에 새는 문제가 있어 분리 모드 고정
-          think: true,
+          // thinking 지원 모델만 true (gemma3는 미지원 → false). think:true면 추론을 본문과 분리.
+          think: OLLAMA_THINK,
           keep_alive: "15m",
           options: {
-            // 21GB 모델 + 32GB RAM: 기본 ctx(32k)는 메모리 초과 크래시 위험
+            // gemma3(소형)는 여유. 대형 모델 + 32GB RAM 대비 ctx 상한 보수적으로 유지
             num_ctx: 20480,
             num_predict: OLLAMA_PREDICT[req.lengthMin ?? "8"] ?? 10000,
             temperature: 0.7,
