@@ -11,7 +11,10 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "yt:upload": "node scripts/youtube-upload.mjs",
-    "yt:plan": "node scripts/youtube-upload.mjs --dry-run"
+    "yt:plan": "node scripts/youtube-upload.mjs --dry-run",
+    "tt:login": "node scripts/tiktok-upload.mjs --login",
+    "tt:upload": "node scripts/tiktok-upload.mjs",
+    "tt:dry": "node scripts/tiktok-upload.mjs --dry-run"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

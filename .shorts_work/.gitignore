@@ -1,0 +1,5 @@
+data/
+*.log
+args_list.json
+/ocr
+*.bak

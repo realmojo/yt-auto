@@ -45,3 +45,15 @@ youtube_shorts/*
 scripts/client_secret.json
 scripts/.youtube-token.json
 output/.yt-upload-state.json
+
+# tiktok (playwright 로그인 세션·디버그·상태 — 쿠키 포함, 절대 커밋 금지)
+scripts/.tiktok-profile/
+scripts/.tiktok-debug/
+output/.tiktok-upload-state.json
+original_shorts/
+output_shorts/
+scripts/ytupload*.log
+output_shorts/.yt-upload-state.json
+ranking_original/
+ranking_shorts/
+*.zip
