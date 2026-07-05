@@ -1,0 +1,48 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260330_역대급 21살 흥분도 MAX 스피드 랭킹 TOP3 [fW4311bbwNU].mp4",
+ "id": "fW4311bbwNU",
+ "name": "20260330_역대급 21살 흥분도 MAX 스피드 랭킹 TOP3 [fW4311bbwNU].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 45.325351,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "물기 직전",
+  "3": "응원단장"
+ },
+ "segments": {
+  "1": [
+   33.0,
+   45.325351
+  ],
+  "2": [
+   19.0,
+   33.0
+  ],
+  "3": [
+   0.0,
+   19.0
+  ]
+ },
+ "rows": [
+  548,
+  658,
+  830,
+  1183,
+  1720
+ ],
+ "rowHeights": [
+  60,
+  76,
+  264,
+  410,
+  22
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

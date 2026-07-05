@@ -1,0 +1,51 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260514_역대급 노래 잘하는 유전 [fB9MkhKNM4Y].mp4",
+ "id": "fB9MkhKNM4Y",
+ "name": "20260514_역대급 노래 잘하는 유전 [fB9MkhKNM4Y].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 55.681451,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "형",
+  "3": "막내",
+  "4": "남매"
+ },
+ "segments": {
+  "1": [
+   43.0,
+   55.681451
+  ],
+  "2": [
+   30.0,
+   43.0
+  ],
+  "3": [
+   14.0,
+   30.0
+  ],
+  "4": [
+   0.0,
+   14.0
+  ]
+ },
+ "rows": [
+  617,
+  1033,
+  1377,
+  1602
+ ],
+ "rowHeights": [
+  250,
+  510,
+  26,
+  24
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

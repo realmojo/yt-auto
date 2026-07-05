@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260514_26살 개웃긴 한심좌 랭킹 TOP4 [0Q4WDmDu4cY].mp4",
+ "id": "0Q4WDmDu4cY",
+ "name": "20260514_26살 개웃긴 한심좌 랭킹 TOP4 [0Q4WDmDu4cY].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 40.333061,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "GTA",
+  "3": "페인트",
+  "4": "청소"
+ },
+ "segments": {
+  "1": [
+   34.0,
+   40.333061
+  ],
+  "2": [
+   23.0,
+   34.0
+  ],
+  "3": [
+   14.0,
+   23.0
+  ],
+  "4": [
+   0.0,
+   14.0
+  ]
+ },
+ "rows": [
+  541,
+  1739
+ ],
+ "rowHeights": [
+  55,
+  361
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

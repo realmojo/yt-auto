@@ -1,0 +1,42 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260320_역대급 형님들 만난 스 [Hab-AMOOLSM].mp4",
+ "id": "Hab-AMOOLSM",
+ "name": "20260320_역대급 형님들 만난 스 [Hab-AMOOLSM].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 53.916735,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "나이지리아 괴물",
+  "3": "뉴욕 헬장"
+ },
+ "segments": {
+  "1": [
+   38.0,
+   53.916735
+  ],
+  "2": [
+   18.0,
+   38.0
+  ],
+  "3": [
+   0.0,
+   18.0
+  ]
+ },
+ "rows": [
+  616,
+  1343
+ ],
+ "rowHeights": [
+  172,
+  1154
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

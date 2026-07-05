@@ -1,0 +1,53 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260425_역대급 악마 순간들 랭킹 TOP4 [6-cQwmWHyzA].mp4",
+ "id": "6-cQwmWHyzA",
+ "name": "20260425_역대급 악마 순간들 랭킹 TOP4 [6-cQwmWHyzA].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 30.162721,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "응꼬",
+  "3": "실수",
+  "4": "마이클잭슨"
+ },
+ "segments": {
+  "1": [
+   18.0,
+   30.162721
+  ],
+  "2": [
+   10.0,
+   18.0
+  ],
+  "3": [
+   5.0,
+   10.0
+  ],
+  "4": [
+   0.0,
+   5.0
+  ]
+ },
+ "rows": [
+  574,
+  1097,
+  1203,
+  1424,
+  1728
+ ],
+ "rowHeights": [
+  60,
+  114,
+  62,
+  80,
+  384
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

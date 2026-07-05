@@ -1,0 +1,42 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260408_역대급 빵디 자랑하는 스피드 랭킹 TOP3 [9esKmQ6-BdY].mp4",
+ "id": "9esKmQ6-BdY",
+ "name": "20260408_역대급 빵디 자랑하는 스피드 랭킹 TOP3 [9esKmQ6-BdY].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 41.958458,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "참싹",
+  "3": "앙"
+ },
+ "segments": {
+  "1": [
+   30.0,
+   41.958458
+  ],
+  "2": [
+   18.0,
+   30.0
+  ],
+  "3": [
+   0.0,
+   18.0
+  ]
+ },
+ "rows": [
+  824,
+  1275
+ ],
+ "rowHeights": [
+  636,
+  194
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

@@ -7,13 +7,17 @@
 사용: python3 rank_pipeline.py <video.mp4 | 폴더> ...
 출력: ../ranking_shorts/<원본파일명>
 """
-import sys, os, re, glob, subprocess, tempfile
+import sys, os, re, glob, subprocess, tempfile, random
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+SCENE_THR = 0.35   # 장면컷 감지 임계
+MIN_SEG = 1.5      # 최소 세그먼트 길이(초) — 너무 잘게 쪼개지지 않게
+
 WORK = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(WORK)
-OUTDIR = os.path.join(ROOT, "ranking_shorts")
+OUTDIR = os.path.join(ROOT, "ranking_shorts")          # 일반 변환 결과
+SHUF_OUTDIR = os.path.join(ROOT, "ranking_shuffled")   # 셔플 변환 결과 (사용자 지시)
 FONT = os.path.join(WORK, "BlackHanSans.ttf")
 LOGO = os.path.join(WORK, "logo_circle.png")
 RANK_LOGO = os.path.join(WORK, "rank_logo_circle.png")  # 랭킹굳 로고
@@ -39,6 +43,106 @@ def probe(v):
         w, h = r.stdout.strip().split("x"); return int(w), int(h)
     except Exception:
         return 1080, 1920
+
+
+def probe_dur(v):
+    r = run(["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nw=1:nk=1", v])
+    try:
+        return float(r.stdout.strip())
+    except Exception:
+        return 0.0
+
+
+def has_audio(v):
+    r = run(["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries",
+             "stream=index", "-of", "csv=p=0", v])
+    return bool(r.stdout.strip())
+
+
+def scene_cuts(v):
+    """장면 전환 시각(초) 목록."""
+    r = run(["ffmpeg", "-i", v, "-filter:v", f"select='gt(scene,{SCENE_THR})',showinfo",
+             "-f", "null", "-"])
+    times = sorted(set(float(m) for m in re.findall(r"pts_time:([\d.]+)", r.stderr)))
+    return times
+
+
+def make_shuffled(v, tmp, n_target=0):
+    """랭킹 항목(클립) 단위로 나눠 순서를 무작위로 재배치해 재결합.
+    n_target(OCR로 얻은 TOP개수)에 맞춰 세그먼트 개수를 정확히 N개로 조정한다."""
+    dur = probe_dur(v)
+    cuts = [c for c in scene_cuts(v) if MIN_SEG < c < dur - MIN_SEG]
+    # 최소 간격 보장(너무 가까운 컷 제거)
+    bounds, last = [0.0], 0.0
+    for c in cuts:
+        if c - last >= MIN_SEG:
+            bounds.append(c); last = c
+    bounds.append(dur)
+    segs = [[bounds[i], bounds[i + 1]] for i in range(len(bounds) - 1)]
+    # OCR TOP개수에 맞춰 세그먼트 수 조정 (많으면 짧은 것 병합, 적으면 긴 것 분할)
+    if n_target and n_target >= 2:
+        while len(segs) > n_target:
+            i = min(range(len(segs)), key=lambda k: segs[k][1] - segs[k][0])
+            if i == 0:
+                segs[0][1] = segs[1][1]; del segs[1]
+            else:
+                segs[i - 1][1] = segs[i][1]; del segs[i]
+        while len(segs) < n_target and max(e - s for s, e in segs) > 2 * MIN_SEG:
+            i = max(range(len(segs)), key=lambda k: segs[k][1] - segs[k][0])
+            s, e = segs[i]; mid = (s + e) / 2
+            segs[i:i + 1] = [[s, mid], [mid, e]]
+    if len(segs) < 2:
+        return v, 1  # 셔플 불가(단일 장면)
+    order = list(range(len(segs)))
+    random.shuffle(order)
+    aud = has_audio(v)
+    fc, labels = [], []
+    for k, idx in enumerate(order):
+        s, e = segs[idx]
+        fc.append(f"[0:v]trim=start={s}:end={e},setpts=PTS-STARTPTS[v{k}]")
+        if aud:
+            fc.append(f"[0:a]atrim=start={s}:end={e},asetpts=PTS-STARTPTS[a{k}]")
+            labels.append(f"[v{k}][a{k}]")
+        else:
+            labels.append(f"[v{k}]")
+    n = len(order)
+    fc.append("".join(labels) + f"concat=n={n}:v=1:a={1 if aud else 0}"
+              + ("[v][a]" if aud else "[v]"))
+    out = os.path.join(tmp, "shuf.mp4")
+    cmd = ["ffmpeg", "-y", "-i", v, "-filter_complex", ";".join(fc), "-map", "[v]"]
+    if aud:
+        cmd += ["-map", "[a]", "-c:a", "aac", "-b:a", "192k"]
+    cmd += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "19",
+            "-pix_fmt", "yuv420p", out]
+    r = subprocess.run(cmd, capture_output=True, text=True)
+    if r.returncode != 0 or not os.path.exists(out):
+        return v, 1  # 실패 시 원본 사용
+    return out, n
+
+
+def title_from_filename(v):
+    """원본 파일명에서 제목 추출(날짜접두·[영상ID] 제거). 랭킹 TOPn 이 온전해 OCR보다 신뢰도 높음."""
+    b = os.path.splitext(os.path.basename(v))[0]
+    b = re.sub(r"^\d{6,8}_", "", b)
+    b = re.sub(r"\s*\[[^\]]+\]\s*$", "", b)
+    return b.strip()
+
+
+def sanitize(title):
+    t = re.sub(r'[\\/:*?"<>|\n\r\t]+', " ", title or "")
+    t = re.sub(r"\s+", " ", t).strip()
+    return t[:100] or "video"
+
+
+def unique_out(outdir, title):
+    base = sanitize(title)
+    p = os.path.join(outdir, base + ".mp4")
+    i = 2
+    while os.path.exists(p):
+        p = os.path.join(outdir, f"{base}_{i}.mp4")
+        i += 1
+    return p
 
 
 def detect_header(v, Wv, Hv, tmp):
@@ -160,20 +264,35 @@ def make_banner(tmp):
     return p
 
 
-def process(v):
+def process(v, shuffle=False):
     Wv, Hv = probe(v)
     name = os.path.basename(v)
     with tempfile.TemporaryDirectory() as tmp:
+        # 헤더/제목은 원본에서 감지·OCR (셔플해도 상단 검정 헤더는 정지라 동일)
         hb = detect_header(v, Wv, Hv, tmp)
         if not hb or hb < 300 or hb > 700:
             hb = 490  # 표준 랭킹 헤더(487/492)로 폴백
             print(f"  [{name}] 헤더 감지 보정 → 490")
-        title = ocr_title(v, hb, tmp)
-        desc, rank = split_title(title)
+        desc, rank = split_title(ocr_title(v, hb, tmp))
+        # 파일명 제목이 'TOPn'을 온전히 담고 있으면 그것을 우선 사용(헤더·파일명 모두 깔끔).
+        # OCR은 뒤에 잡음/오인식/'N탄' 누락이 잦아 신뢰도가 낮음.
+        ft = title_from_filename(v)
+        if re.search(r"TOP\s*\d", ft, re.I):
+            desc, rank = split_title(ft)
+        # 셔플: TOP개수(N)만큼 랭킹 항목(클립)으로 나눠 순서 섞기
+        nseg = 0
+        base = v
+        if shuffle:
+            m = re.search(r"TOP\s*(\d+)", rank, re.I)
+            n_target = int(m.group(1)) if m else 0
+            base, nseg = make_shuffled(v, tmp, n_target)
         header = make_header(hb, desc, rank, tmp)
         banner = make_banner(tmp)
-        out = os.path.join(OUTDIR, name)
-        cmd = ["ffmpeg", "-y", "-i", v, "-i", header, "-i", banner,
+        full_title = (desc + " " + rank).strip() or sanitize(name)
+        outdir = SHUF_OUTDIR if shuffle else OUTDIR   # 셔플이면 ranking_shuffled/
+        os.makedirs(outdir, exist_ok=True)
+        out = unique_out(outdir, full_title)
+        cmd = ["ffmpeg", "-y", "-i", base, "-i", header, "-i", banner,
                "-filter_complex", "[0:v][1:v]overlay=0:0[h];[h][2:v]overlay=0:H-h[v]",
                "-map", "[v]", "-map", "0:a?", "-c:v", "libx264", "-preset", "veryfast",
                "-crf", "19", "-pix_fmt", "yuv420p", "-c:a", "copy",
@@ -182,25 +301,30 @@ def process(v):
         if r.returncode != 0:
             print(f"FAIL {name}: {r.stderr[-300:]}")
             return False
-    print(f"OK {name}  hb={hb}  제목='{desc}' | '{rank}'")
+    tag = f" 셔플({nseg}조각)" if shuffle and nseg > 1 else (" 셔플불가" if shuffle else "")
+    print(f"OK {name}{tag}  hb={hb}  제목='{desc}'|'{rank}'  → {os.path.basename(out)}")
     return True
 
 
 def main():
+    args = sys.argv[1:]
+    shuffle = "--shuffle" in args
+    args = [a for a in args if a != "--shuffle"]
     paths = []
-    for a in sys.argv[1:]:
+    for a in args:
         if os.path.isdir(a):
             paths += sorted(glob.glob(os.path.join(a, "*.mp4")))
         else:
             paths.append(a)
     if not paths:
-        print("입력 영상이 없습니다. 사용: python3 rank_pipeline.py <영상|폴더>")
+        print("입력 영상이 없습니다. 사용: python3 rank_pipeline.py [--shuffle] <영상|폴더>")
         return
     ok = 0
     for p in paths:
-        if process(p):
+        if process(p, shuffle=shuffle):
             ok += 1
-    print(f"\n완료: {ok}/{len(paths)}  -> {OUTDIR}")
+    print(f"\n완료: {ok}/{len(paths)}  -> {SHUF_OUTDIR if shuffle else OUTDIR}"
+          + ("  (셔플 적용)" if shuffle else ""))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,54 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260402_개웃긴 스피드 팬 영상 리액션 랭킹 TOP3 [JLQWjekFMeI].mp4",
+ "id": "JLQWjekFMeI",
+ "name": "20260402_개웃긴 스피드 팬 영상 리액션 랭킹 TOP3 [JLQWjekFMeI].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.271111,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "코스프레",
+  "3": "스피드"
+ },
+ "segments": {
+  "1": [
+   26.0,
+   35.271111
+  ],
+  "2": [
+   16.0,
+   26.0
+  ],
+  "3": [
+   0.0,
+   16.0
+  ]
+ },
+ "rows": [
+  572,
+  620,
+  698,
+  946,
+  1451,
+  1548,
+  1667,
+  1682
+ ],
+ "rowHeights": [
+  56,
+  23,
+  68,
+  412,
+  30,
+  92,
+  14,
+  12
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

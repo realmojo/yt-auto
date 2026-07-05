@@ -1,0 +1,46 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260328_역대급 현모양처 스피드 ᄅ [BuzVxaodaJw].mp4",
+ "id": "BuzVxaodaJw",
+ "name": "20260328_역대급 현모양처 스피드 ᄅ [BuzVxaodaJw].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 50.921361,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "손톱 포크",
+  "3": "폭탄 계란"
+ },
+ "segments": {
+  "1": [
+   35.0,
+   50.921361
+  ],
+  "2": [
+   16.0,
+   35.0
+  ],
+  "3": [
+   0.0,
+   16.0
+  ]
+ },
+ "rows": [
+  627,
+  947,
+  1430,
+  1892
+ ],
+ "rowHeights": [
+  53,
+  98,
+  812,
+  55
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

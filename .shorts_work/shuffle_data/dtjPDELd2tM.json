@@ -1,0 +1,49 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260414_25살 개웃긴 한심좌 랭킹 [dtjPDELd2tM].mp4",
+ "id": "dtjPDELd2tM",
+ "name": "20260414_25살 개웃긴 한심좌 랭킹 [dtjPDELd2tM].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 44.094694,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "아우",
+  "3": "몰랐지",
+  "4": "헤드뱅잉"
+ },
+ "segments": {
+  "1": [
+   37.0,
+   44.094694
+  ],
+  "2": [
+   29.0,
+   37.0
+  ],
+  "3": [
+   12.0,
+   29.0
+  ],
+  "4": [
+   0.0,
+   12.0
+  ]
+ },
+ "rows": [
+  742,
+  911,
+  1528
+ ],
+ "rowHeights": [
+  317,
+  14,
+  288
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

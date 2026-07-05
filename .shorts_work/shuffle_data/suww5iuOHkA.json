@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260626_역대급 에너지 드링크 코스튬 랭킹 TOP4 [suww5iuOHkA].mp4",
+ "id": "suww5iuOHkA",
+ "name": "20260626_역대급 에너지 드링크 코스튬 랭킹 TOP4 [suww5iuOHkA].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 28.328345,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "여검사",
+  "3": "레드불",
+  "4": "몬스터"
+ },
+ "segments": {
+  "1": [
+   21.0,
+   28.328345
+  ],
+  "2": [
+   14.0,
+   21.0
+  ],
+  "3": [
+   8.0,
+   14.0
+  ],
+  "4": [
+   0.0,
+   8.0
+  ]
+ },
+ "rows": [
+  1230
+ ],
+ "rowHeights": [
+  1380
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

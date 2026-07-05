@@ -1,0 +1,44 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260404_개웃긴 스피드 팬아트 리액션 랭킹 TOP3 [FyxPYBf07C0].mp4",
+ "id": "FyxPYBf07C0",
+ "name": "20260404_개웃긴 스피드 팬아트 리액션 랭킹 TOP3 [FyxPYBf07C0].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.87483,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "콧구멍",
+  "3": "습@가"
+ },
+ "segments": {
+  "1": [
+   27.0,
+   35.87483
+  ],
+  "2": [
+   14.0,
+   27.0
+  ],
+  "3": [
+   0.0,
+   14.0
+  ]
+ },
+ "rows": [
+  571,
+  1081,
+  1749
+ ],
+ "rowHeights": [
+  167,
+  826,
+  342
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

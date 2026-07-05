@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260622_역대급 개웃긴 아기 울음 멈ᄎ [jPDLQGNUNT0].mp4",
+ "id": "jPDLQGNUNT0",
+ "name": "20260622_역대급 개웃긴 아기 울음 멈ᄎ [jPDLQGNUNT0].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 18.668844,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "에코",
+  "3": "아빠..?",
+  "4": "인디언"
+ },
+ "segments": {
+  "1": [
+   15.0,
+   18.668844
+  ],
+  "2": [
+   9.0,
+   15.0
+  ],
+  "3": [
+   4.0,
+   9.0
+  ],
+  "4": [
+   0.0,
+   4.0
+  ]
+ },
+ "rows": [
+  1412
+ ],
+ "rowHeights": [
+  872
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

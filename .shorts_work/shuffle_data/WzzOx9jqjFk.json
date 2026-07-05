@@ -1,0 +1,53 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260628_역대급 뚜렛 증후군 랭킹 TOP4 [WzzOx9jqjFk].mp4",
+ "id": "WzzOx9jqjFk",
+ "name": "20260628_역대급 뚜렛 증후군 랭킹 TOP4 [WzzOx9jqjFk].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 49.017324,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "화장",
+  "3": "19금",
+  "4": "베이킹"
+ },
+ "segments": {
+  "1": [
+   40.0,
+   49.017324
+  ],
+  "2": [
+   32.0,
+   40.0
+  ],
+  "3": [
+   16.0,
+   32.0
+  ],
+  "4": [
+   0.0,
+   16.0
+  ]
+ },
+ "rows": [
+  733,
+  1033,
+  1108,
+  1811,
+  1909
+ ],
+ "rowHeights": [
+  462,
+  134,
+  12,
+  54,
+  22
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

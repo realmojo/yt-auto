@@ -1,0 +1,46 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260312_역대급 웃긴 터키식 장ᄂ [w3ObfXkzp3o].mp4",
+ "id": "w3ObfXkzp3o",
+ "name": "20260312_역대급 웃긴 터키식 장ᄂ [w3ObfXkzp3o].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 50.94458,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "터키 아이스크림",
+  "3": "터키 장난"
+ },
+ "segments": {
+  "1": [
+   39.0,
+   50.94458
+  ],
+  "2": [
+   16.0,
+   39.0
+  ],
+  "3": [
+   0.0,
+   16.0
+  ]
+ },
+ "rows": [
+  848,
+  1362,
+  1579,
+  1888
+ ],
+ "rowHeights": [
+  712,
+  283,
+  115,
+  64
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

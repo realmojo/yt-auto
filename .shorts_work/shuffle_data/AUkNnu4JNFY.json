@@ -1,0 +1,53 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260310_역대급 스피드 카이 듀오 랭킹 TOP4 [AUkNnu4JNFY].mp4",
+ "id": "AUkNnu4JNFY",
+ "name": "20260310_역대급 스피드 카이 듀오 랭킹 TOP4 [AUkNnu4JNFY].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 57.655147,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "덤앤더머",
+  "3": "향신료",
+  "4": "더 럽"
+ },
+ "segments": {
+  "1": [
+   42.0,
+   57.655147
+  ],
+  "2": [
+   23.0,
+   42.0
+  ],
+  "3": [
+   7.0,
+   23.0
+  ],
+  "4": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  695,
+  1017,
+  1122,
+  1400,
+  1701
+ ],
+ "rowHeights": [
+  302,
+  38,
+  136,
+  155,
+  438
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

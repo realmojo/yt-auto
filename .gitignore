@@ -57,3 +57,19 @@ output_shorts/.yt-upload-state.json
 ranking_original/
 ranking_shorts/
 *.zip
+ranking_shuffled/
+
+# upload_scripts (playwright-extra 방식 — 로그인 세션·업로드 기록, 쿠키 포함 절대 금지)
+upload_scripts/*-auth.json
+upload_scripts/.tiktok-uploaded.json
+upload_scripts/tiktok-success.txt
+upload_scripts/instagram-success.txt
+upload_scripts/.ig-debug/
+upload_scripts/clip-success.txt
+upload_scripts/.clip-debug/
+
+# shopping (샤오홍수 레퍼런스 수집 — 로그인 세션·수집 결과·다운로드 영상)
+shopping/rednote-auth.json
+shopping/.rednote-debug/
+shopping/refs/
+shopping/qwen-voice.json

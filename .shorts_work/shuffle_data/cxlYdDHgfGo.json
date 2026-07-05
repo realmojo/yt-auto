@@ -1,0 +1,56 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260405_역대급 웃긴 요리 실패 랭킹 TOP5 [cxlYdDHgfGo].mp4",
+ "id": "cxlYdDHgfGo",
+ "name": "20260405_역대급 웃긴 요리 실패 랭킹 TOP5 [cxlYdDHgfGo].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 43.490975,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "폭발",
+  "3": "대회",
+  "4": "원안",
+  "5": "악마 소환"
+ },
+ "segments": {
+  "1": [
+   35.0,
+   43.490975
+  ],
+  "2": [
+   27.0,
+   35.0
+  ],
+  "3": [
+   12.0,
+   27.0
+  ],
+  "4": [
+   7.0,
+   12.0
+  ],
+  "5": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  688,
+  1054,
+  1394,
+  1749
+ ],
+ "rowHeights": [
+  401,
+  12,
+  64,
+  216
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

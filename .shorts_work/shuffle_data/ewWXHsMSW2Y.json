@@ -1,0 +1,51 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260423_25살 한심좌의 좌절 랭킹 TOP4 [ewWXHsMSW2Y].mp4",
+ "id": "ewWXHsMSW2Y",
+ "name": "20260423_25살 한심좌의 좌절 랭킹 TOP4 [ewWXHsMSW2Y].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 42.190658,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "견인",
+  "3": "5000원",
+  "4": "R.I.P"
+ },
+ "segments": {
+  "1": [
+   26.0,
+   42.190658
+  ],
+  "2": [
+   16.0,
+   26.0
+  ],
+  "3": [
+   7.0,
+   16.0
+  ],
+  "4": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  701,
+  1282,
+  1322,
+  1638
+ ],
+ "rowHeights": [
+  429,
+  24,
+  55,
+  563
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

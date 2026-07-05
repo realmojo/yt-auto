@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260515_개웃긴 멍청한 상황 랭킹 TOP4 [CWWjUdx_tog].mp4",
+ "id": "CWWjUdx_tog",
+ "name": "20260515_개웃긴 멍청한 상황 랭킹 TOP4 [CWWjUdx_tog].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 19.667302,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "UP",
+  "3": "수상 스키",
+  "4": "미믹"
+ },
+ "segments": {
+  "1": [
+   15.0,
+   19.667302
+  ],
+  "2": [
+   10.0,
+   15.0
+  ],
+  "3": [
+   6.0,
+   10.0
+  ],
+  "4": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  1083,
+  1807
+ ],
+ "rowHeights": [
+  1193,
+  226
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

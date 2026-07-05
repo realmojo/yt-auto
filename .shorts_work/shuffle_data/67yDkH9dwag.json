@@ -1,0 +1,46 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260403_역대급 웃긴 팬아트 리뷰  [67yDkH9dwag].mp4",
+ "id": "67yDkH9dwag",
+ "name": "20260403_역대급 웃긴 팬아트 리뷰  [67yDkH9dwag].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.247891,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "콧물",
+  "3": "실성"
+ },
+ "segments": {
+  "1": [
+   25.0,
+   35.247891
+  ],
+  "2": [
+   14.0,
+   25.0
+  ],
+  "3": [
+   0.0,
+   14.0
+  ]
+ },
+ "rows": [
+  753,
+  1196,
+  1443,
+  1751
+ ],
+ "rowHeights": [
+  461,
+  205,
+  246,
+  338
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

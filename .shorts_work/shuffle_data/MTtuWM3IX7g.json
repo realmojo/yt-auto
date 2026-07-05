@@ -1,0 +1,52 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260626_역대급 미@친 바베큐 랭킹 TOP5 [MTtuWM3IX7g].mp4",
+ "id": "MTtuWM3IX7g",
+ "name": "20260626_역대급 미@친 바베큐 랭킹 TOP5 [MTtuWM3IX7g].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 32.136417,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "최고급",
+  "3": "윤기",
+  "4": "육즙",
+  "5": "치즈소세지"
+ },
+ "segments": {
+  "1": [
+   24.0,
+   32.136417
+  ],
+  "2": [
+   18.0,
+   24.0
+  ],
+  "3": [
+   11.0,
+   18.0
+  ],
+  "4": [
+   5.0,
+   11.0
+  ],
+  "5": [
+   0.0,
+   5.0
+  ]
+ },
+ "rows": [
+  876,
+  1270
+ ],
+ "rowHeights": [
+  724,
+  33
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

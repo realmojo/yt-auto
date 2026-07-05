@@ -1,0 +1,44 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260227_역대급 내 차 참교육 랭키 [bSldcOnS_qw].mp4",
+ "id": "bSldcOnS_qw",
+ "name": "20260227_역대급 내 차 참교육 랭키 [bSldcOnS_qw].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 50.317642,
+ "headerBottom": 487,
+ "footerTop": 1637,
+ "N": 3,
+ "titles": {
+  "1": "너가 깨",
+  "2": "빵댕이 치워",
+  "3": "만 찍는다고 있"
+ },
+ "segments": {
+  "1": [
+   29.9,
+   50.317642
+  ],
+  "2": [
+   15.083,
+   29.9
+  ],
+  "3": [
+   0.0,
+   15.083
+  ]
+ },
+ "rows": [
+  565,
+  667,
+  737,
+  823
+ ],
+ "rowHeights": [
+  45,
+  66,
+  25,
+  142
+ ],
+ "ok": false,
+ "warnings": []
+}

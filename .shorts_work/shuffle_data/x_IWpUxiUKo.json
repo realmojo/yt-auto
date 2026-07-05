@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260418_25살 개웃긴 한심좌 랭킹 TOP4 [x_IWpUxiUKo].mp4",
+ "id": "x_IWpUxiUKo",
+ "name": "20260418_25살 개웃긴 한심좌 랭킹 TOP4 [x_IWpUxiUKo].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 30.000181,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "화재",
+  "3": "공룡",
+  "4": "계란"
+ },
+ "segments": {
+  "1": [
+   21.0,
+   30.000181
+  ],
+  "2": [
+   14.0,
+   21.0
+  ],
+  "3": [
+   6.0,
+   14.0
+  ],
+  "4": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  795,
+  1171
+ ],
+ "rowHeights": [
+  617,
+  82
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

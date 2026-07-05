@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260602_26살 개웃긴 한심좌 랭킹TOP4 [JCGjjqjBXZ0].mp4",
+ "id": "JCGjjqjBXZ0",
+ "name": "20260602_26살 개웃긴 한심좌 랭킹TOP4 [JCGjjqjBXZ0].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 18.901043,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "투명계단",
+  "3": "젬민이",
+  "4": "CD"
+ },
+ "segments": {
+  "1": [
+   15.0,
+   18.901043
+  ],
+  "2": [
+   10.0,
+   15.0
+  ],
+  "3": [
+   5.0,
+   10.0
+  ],
+  "4": [
+   0.0,
+   5.0
+  ]
+ },
+ "rows": [
+  850,
+  1451
+ ],
+ "rowHeights": [
+  724,
+  441
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

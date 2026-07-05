@@ -1,0 +1,40 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260318_역대급 엄청 착한 인성 스피드 랭킹 TOP3 [yh1XaVOqqHo].mp4",
+ "id": "yh1XaVOqqHo",
+ "name": "20260318_역대급 엄청 착한 인성 스피드 랭킹 TOP3 [yh1XaVOqqHo].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 56.819229,
+ "headerBottom": 487,
+ "footerTop": 1572,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천 좀",
+  "2": "스케이트 보드 와 이 보",
+  "3": "아니 저 스케이트 보"
+ },
+ "segments": {
+  "1": [
+   44.3,
+   56.819229
+  ],
+  "2": [
+   16.833,
+   44.3
+  ],
+  "3": [
+   0.0,
+   16.833
+  ]
+ },
+ "rows": [
+  579,
+  1138
+ ],
+ "rowHeights": [
+  185,
+  867
+ ],
+ "ok": false,
+ "warnings": []
+}

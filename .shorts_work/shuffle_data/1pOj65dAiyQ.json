@@ -1,0 +1,51 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260513_26살 개웃긴 한심좌 랭킹 TOP4 [1pOj65dAiyQ].mp4",
+ "id": "1pOj65dAiyQ",
+ "name": "20260513_26살 개웃긴 한심좌 랭킹 TOP4 [1pOj65dAiyQ].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.155011,
+ "headerBottom": 488,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "낚시",
+  "3": "틱톡",
+  "4": "칼"
+ },
+ "segments": {
+  "1": [
+   29.0,
+   35.155011
+  ],
+  "2": [
+   20.0,
+   29.0
+  ],
+  "3": [
+   10.0,
+   20.0
+  ],
+  "4": [
+   0.0,
+   10.0
+  ]
+ },
+ "rows": [
+  653,
+  983,
+  1063,
+  1393
+ ],
+ "rowHeights": [
+  330,
+  130,
+  18,
+  490
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

@@ -1,0 +1,49 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260615_역대급 음료 폭발 랭킹 T [4qvZTTKusdk].mp4",
+ "id": "4qvZTTKusdk",
+ "name": "20260615_역대급 음료 폭발 랭킹 T [4qvZTTKusdk].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 32.066757,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "물폭탄",
+  "3": "발작",
+  "4": "콜라 세수"
+ },
+ "segments": {
+  "1": [
+   29.0,
+   32.066757
+  ],
+  "2": [
+   12.0,
+   29.0
+  ],
+  "3": [
+   8.0,
+   12.0
+  ],
+  "4": [
+   0.0,
+   8.0
+  ]
+ },
+ "rows": [
+  588,
+  913,
+  1677
+ ],
+ "rowHeights": [
+  55,
+  14,
+  486
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

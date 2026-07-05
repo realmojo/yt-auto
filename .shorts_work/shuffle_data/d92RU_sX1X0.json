@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260514_역대급 멍청하게 죽는 법 TOP4 [d92RU_sX1X0].mp4",
+ "id": "d92RU_sX1X0",
+ "name": "20260514_역대급 멍청하게 죽는 법 TOP4 [d92RU_sX1X0].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 20.805079,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "계곡 탐험",
+  "3": "390kg",
+  "4": "듄 베이싱"
+ },
+ "segments": {
+  "1": [
+   16.0,
+   20.805079
+  ],
+  "2": [
+   10.0,
+   16.0
+  ],
+  "3": [
+   4.0,
+   10.0
+  ],
+  "4": [
+   0.0,
+   4.0
+  ]
+ },
+ "rows": [
+  1203
+ ],
+ "rowHeights": [
+  1433
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

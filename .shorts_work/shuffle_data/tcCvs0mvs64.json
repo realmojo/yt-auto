@@ -1,0 +1,34 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260507_역대급 돈낭비 참교육 ᄅ [tcCvs0mvs64].mp4",
+ "id": "tcCvs0mvs64",
+ "name": "20260507_역대급 돈낭비 참교육 ᄅ [tcCvs0mvs64].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 56.09941,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "",
+  "2": "",
+  "3": "",
+  "4": ""
+ },
+ "segments": {
+  "1": null,
+  "2": null,
+  "3": null,
+  "4": [
+   0.0,
+   null
+  ]
+ },
+ "rows": [],
+ "rowHeights": [],
+ "ok": false,
+ "warnings": [
+  "rank 3 경계 미검출",
+  "rank 2 경계 미검출",
+  "rank 1 경계 미검출"
+ ]
+}

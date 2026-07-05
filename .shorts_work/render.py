@@ -16,6 +16,22 @@ NAME = "해숏티"
 os.makedirs(OUTDIR, exist_ok=True)
 
 
+def sanitize(title):
+    t = re.sub(r'[\\/:*?"<>|\n\r\t]+', " ", title or "")
+    t = re.sub(r"\s+", " ", t).strip()
+    return t[:100] or "video"
+
+
+def unique_out(outdir, title):
+    base = sanitize(title)
+    p = os.path.join(outdir, base + ".mp4")
+    i = 2
+    while os.path.exists(p):
+        p = os.path.join(outdir, f"{base}_{i}.mp4")
+        i += 1
+    return p
+
+
 def font(sz):
     return ImageFont.truetype(FONT, sz)
 
@@ -103,7 +119,7 @@ def main():
     for i, s in enumerate(segs):
         s["end"] = segs[i + 1]["start"] if i + 1 < len(segs) else (dur or s["end"])
 
-    out = os.path.join(OUTDIR, data["filename"])
+    out = unique_out(OUTDIR, data["title"])  # 파일명 = 제목.mp4
     with tempfile.TemporaryDirectory() as tmp:
         header = make_header(W, hb, data["title"], tmp)
         cap_center = ft_top + int((H - ft_top) * 0.20)

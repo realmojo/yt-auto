@@ -1,0 +1,40 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260304_역대급 중국 길거리 파이 [zaZ_Hi7QmK8].mp4",
+ "id": "zaZ_Hi7QmK8",
+ "name": "20260304_역대급 중국 길거리 파이 [zaZ_Hi7QmK8].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 38.638005,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "딱 기다려",
+  "3": "진심 펼치"
+ },
+ "segments": {
+  "1": [
+   21.288,
+   38.638005
+  ],
+  "2": [
+   13.5,
+   21.288
+  ],
+  "3": [
+   0.0,
+   13.5
+  ]
+ },
+ "rows": [
+  566,
+  1026
+ ],
+ "rowHeights": [
+  48,
+  404
+ ],
+ "ok": false,
+ "warnings": []
+}

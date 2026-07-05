@@ -1,0 +1,50 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260510_역대급 코르셋 챌린지 랭킹 TOP5 [P58yBWzhyDE].mp4",
+ "id": "P58yBWzhyDE",
+ "name": "20260510_역대급 코르셋 챌린지 랭킹 TOP5 [P58yBWzhyDE].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 27.492426,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "스스로",
+  "3": "비슷한데?",
+  "4": "다리",
+  "5": "박력"
+ },
+ "segments": {
+  "1": [
+   23.0,
+   27.492426
+  ],
+  "2": [
+   17.0,
+   23.0
+  ],
+  "3": [
+   11.0,
+   17.0
+  ],
+  "4": [
+   4.0,
+   11.0
+  ],
+  "5": [
+   0.0,
+   4.0
+  ]
+ },
+ "rows": [
+  1204
+ ],
+ "rowHeights": [
+  1432
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

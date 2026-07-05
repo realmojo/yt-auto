@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260528_26살 개웃긴 한심좌 랭킹 TOP4 [DCIeYWzJvIk].mp4",
+ "id": "DCIeYWzJvIk",
+ "name": "20260528_26살 개웃긴 한심좌 랭킹 TOP4 [DCIeYWzJvIk].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 26.122449,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천 좀",
+  "2": "갈매기 훗",
+  "3": "마법",
+  "4": "게임 아 왜 안돼"
+ },
+ "segments": {
+  "1": [
+   22.5,
+   26.122449
+  ],
+  "2": [
+   12.5,
+   22.5
+  ],
+  "3": [
+   6.767,
+   12.5
+  ],
+  "4": [
+   0.0,
+   6.767
+  ]
+ },
+ "rows": [
+  533,
+  898,
+  959
+ ],
+ "rowHeights": [
+  93,
+  15,
+  14
+ ],
+ "ok": false,
+ "warnings": []
+}

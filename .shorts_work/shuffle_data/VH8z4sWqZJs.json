@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260502_26살 개웃긴 한심좌 랭킹 TOP4 [VH8z4sWqZJs].mp4",
+ "id": "VH8z4sWqZJs",
+ "name": "20260502_26살 개웃긴 한심좌 랭킹 TOP4 [VH8z4sWqZJs].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 29.559002,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "도둑",
+  "3": "면도",
+  "4": "쿠키"
+ },
+ "segments": {
+  "1": [
+   20.0,
+   29.559002
+  ],
+  "2": [
+   11.0,
+   20.0
+  ],
+  "3": [
+   6.0,
+   11.0
+  ],
+  "4": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  548
+ ],
+ "rowHeights": [
+  64
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

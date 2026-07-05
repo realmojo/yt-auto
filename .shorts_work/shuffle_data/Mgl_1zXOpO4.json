@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260430_역대급 어이없는 상황 랭킹 TOP4 [Mgl_1zXOpO4].mp4",
+ "id": "Mgl_1zXOpO4",
+ "name": "20260430_역대급 어이없는 상황 랭킹 TOP4 [Mgl_1zXOpO4].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 19.969161,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "잠수",
+  "3": "뱀",
+  "4": "수류탄"
+ },
+ "segments": {
+  "1": [
+   16.0,
+   19.969161
+  ],
+  "2": [
+   11.0,
+   16.0
+  ],
+  "3": [
+   6.0,
+   11.0
+  ],
+  "4": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  1203
+ ],
+ "rowHeights": [
+  1433
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

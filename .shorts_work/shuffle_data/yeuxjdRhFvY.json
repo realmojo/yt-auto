@@ -1,0 +1,38 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260314_역대급 개웃긴 대환장 스피드 랭킹 TOP3 [yeuxjdRhFvY].mp4",
+ "id": "yeuxjdRhFvY",
+ "name": "20260314_역대급 개웃긴 대환장 스피드 랭킹 TOP3 [yeuxjdRhFvY].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.317551,
+ "headerBottom": 487,
+ "footerTop": 1625,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천 좀",
+  "2": "백덤블링",
+  "3": "인기남"
+ },
+ "segments": {
+  "1": [
+   20.033,
+   35.317551
+  ],
+  "2": [
+   8.2,
+   20.033
+  ],
+  "3": [
+   0.0,
+   8.2
+  ]
+ },
+ "rows": [
+  772
+ ],
+ "rowHeights": [
+  570
+ ],
+ "ok": false,
+ "warnings": []
+}

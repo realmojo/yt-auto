@@ -1,0 +1,54 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260529_역대급 돌 던지기 랭킹 TOP5 [cQzeUmyjfCA].mp4",
+ "id": "cQzeUmyjfCA",
+ "name": "20260529_역대급 돌 던지기 랭킹 TOP5 [cQzeUmyjfCA].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 24.079093,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "오두방정",
+  "3": "강제샤워",
+  "4": "풍덩",
+  "5": "파괴"
+ },
+ "segments": {
+  "1": [
+   16.0,
+   24.079093
+  ],
+  "2": [
+   15.0,
+   16.0
+  ],
+  "3": [
+   10.0,
+   15.0
+  ],
+  "4": [
+   6.0,
+   10.0
+  ],
+  "5": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  935,
+  1476,
+  1793
+ ],
+ "rowHeights": [
+  886,
+  55,
+  254
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

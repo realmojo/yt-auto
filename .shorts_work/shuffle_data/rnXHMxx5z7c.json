@@ -1,0 +1,48 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260329_역대급 21살 인터넷 방송 스피드 TOP3 [rnXHMxx5z7c].mp4",
+ "id": "rnXHMxx5z7c",
+ "name": "20260329_역대급 21살 인터넷 방송 스피드 TOP3 [rnXHMxx5z7c].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 36.850068,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "BTS",
+  "3": "쫄?"
+ },
+ "segments": {
+  "1": [
+   24.0,
+   36.850068
+  ],
+  "2": [
+   6.0,
+   24.0
+  ],
+  "3": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  577,
+  661,
+  784,
+  840,
+  1475
+ ],
+ "rowHeights": [
+  119,
+  34,
+  44,
+  40,
+  31
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

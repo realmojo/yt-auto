@@ -1,0 +1,50 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260307_역대급 스피드 VS 로봇 랭킹 TOP3 [sr8MYN8_xNg].mp4",
+ "id": "sr8MYN8_xNg",
+ "name": "20260307_역대급 스피드 VS 로봇 랭킹 TOP3 [sr8MYN8_xNg].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 37.477007,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "댄스로봇",
+  "3": "14억 로봇"
+ },
+ "segments": {
+  "1": [
+   28.0,
+   37.477007
+  ],
+  "2": [
+   16.0,
+   28.0
+  ],
+  "3": [
+   0.0,
+   16.0
+  ]
+ },
+ "rows": [
+  548,
+  966,
+  1196,
+  1218,
+  1454,
+  1680
+ ],
+ "rowHeights": [
+  116,
+  408,
+  28,
+  15,
+  392,
+  32
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260529_역대급 개웃긴 상황 랭킹 TOP5 [DddacVlrvCU].mp4",
+ "id": "DddacVlrvCU",
+ "name": "20260529_역대급 개웃긴 상황 랭킹 TOP5 [DddacVlrvCU].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 58.026667,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "버블티",
+  "3": "현타",
+  "4": "공개",
+  "5": "필수템"
+ },
+ "segments": {
+  "1": [
+   45.0,
+   58.026667
+  ],
+  "2": [
+   38.0,
+   45.0
+  ],
+  "3": [
+   22.0,
+   38.0
+  ],
+  "4": [
+   11.0,
+   22.0
+  ],
+  "5": [
+   0.0,
+   11.0
+  ]
+ },
+ "rows": [
+  548,
+  632,
+  1143
+ ],
+ "rowHeights": [
+  60,
+  100,
+  918
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

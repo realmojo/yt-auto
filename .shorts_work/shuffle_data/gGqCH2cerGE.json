@@ -1,0 +1,49 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260520_역대급 보기 힘든 영상 랭킹 TOP4 [gGqCH2cerGE].mp4",
+ "id": "gGqCH2cerGE",
+ "name": "20260520_역대급 보기 힘든 영상 랭킹 TOP4 [gGqCH2cerGE].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 31.137959,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "으악",
+  "3": "게이",
+  "4": "춤"
+ },
+ "segments": {
+  "1": [
+   26.0,
+   31.137959
+  ],
+  "2": [
+   16.0,
+   26.0
+  ],
+  "3": [
+   8.0,
+   16.0
+  ],
+  "4": [
+   0.0,
+   8.0
+  ]
+ },
+ "rows": [
+  572,
+  993,
+  1386
+ ],
+ "rowHeights": [
+  56,
+  662,
+  54
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

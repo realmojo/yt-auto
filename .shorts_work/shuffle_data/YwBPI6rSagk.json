@@ -1,0 +1,42 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260315_역대급 개웃긴 표정 스피드 랭킹 TOP3 [YwBPI6rSagk].mp4",
+ "id": "YwBPI6rSagk",
+ "name": "20260315_역대급 개웃긴 표정 스피드 랭킹 TOP3 [YwBPI6rSagk].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 43.444535,
+ "headerBottom": 625,
+ "footerTop": 1306,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "출생의비밀",
+  "3": "맞다이"
+ },
+ "segments": {
+  "1": [
+   34.0,
+   43.444535
+  ],
+  "2": [
+   12.0,
+   34.0
+  ],
+  "3": [
+   0.0,
+   12.0
+  ]
+ },
+ "rows": [
+  880,
+  1236
+ ],
+ "rowHeights": [
+  511,
+  140
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

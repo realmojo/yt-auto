@@ -1,0 +1,45 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260417_25살 개웃긴 한심좌 TOP4 [DtvgRN-qCcQ].mp4",
+ "id": "DtvgRN-qCcQ",
+ "name": "20260417_25살 개웃긴 한심좌 TOP4 [DtvgRN-qCcQ].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 44.814512,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "발가락",
+  "2": "모닝루틴",
+  "3": "돈복사",
+  "4": "병따개"
+ },
+ "segments": {
+  "1": [
+   33.0,
+   44.814512
+  ],
+  "2": [
+   9.0,
+   33.0
+  ],
+  "3": [
+   22.0,
+   9.0
+  ],
+  "4": [
+   0.0,
+   22.0
+  ]
+ },
+ "rows": [
+  1204
+ ],
+ "rowHeights": [
+  1432
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

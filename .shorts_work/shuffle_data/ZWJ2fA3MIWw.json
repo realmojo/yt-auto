@@ -1,0 +1,49 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260507_역대급 통쾌함 주는 반품 랭킹 TOP4 [ZWJ2fA3MIWw].mp4",
+ "id": "ZWJ2fA3MIWw",
+ "name": "20260507_역대급 통쾌함 주는 반품 랭킹 TOP4 [ZWJ2fA3MIWw].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 23.800454,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "텀블러",
+  "3": "우산",
+  "4": "땅콩버터"
+ },
+ "segments": {
+  "1": [
+   20.0,
+   23.800454
+  ],
+  "2": [
+   15.0,
+   20.0
+  ],
+  "3": [
+   8.0,
+   15.0
+  ],
+  "4": [
+   0.0,
+   8.0
+  ]
+ },
+ "rows": [
+  554,
+  672,
+  1171
+ ],
+ "rowHeights": [
+  48,
+  52,
+  862
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

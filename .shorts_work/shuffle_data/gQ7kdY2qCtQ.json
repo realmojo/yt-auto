@@ -1,0 +1,50 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260502_역대급 웃긴 언어 배우는 아이 래 [gQ7kdY2qCtQ].mp4",
+ "id": "gQ7kdY2qCtQ",
+ "name": "20260502_역대급 웃긴 언어 배우는 아이 래 [gQ7kdY2qCtQ].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 35.92127,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 5,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "happiness",
+  "3": "nutella",
+  "4": "perfect",
+  "5": "cook"
+ },
+ "segments": {
+  "1": [
+   28.0,
+   35.92127
+  ],
+  "2": [
+   21.0,
+   28.0
+  ],
+  "3": [
+   12.0,
+   21.0
+  ],
+  "4": [
+   7.0,
+   12.0
+  ],
+  "5": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  1206
+ ],
+ "rowHeights": [
+  1427
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

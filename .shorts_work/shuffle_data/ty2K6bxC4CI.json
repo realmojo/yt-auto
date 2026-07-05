@@ -1,0 +1,51 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260503_26살 개웃긴 한심좌 랭킹TOP4 [ty2K6bxC4CI].mp4",
+ "id": "ty2K6bxC4CI",
+ "name": "20260503_26살 개웃긴 한심좌 랭킹TOP4 [ty2K6bxC4CI].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 27.190567,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "프로포즈",
+  "3": "불",
+  "4": "촛불"
+ },
+ "segments": {
+  "1": [
+   17.0,
+   27.190567
+  ],
+  "2": [
+   12.0,
+   17.0
+  ],
+  "3": [
+   7.0,
+   12.0
+  ],
+  "4": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  535,
+  946,
+  1085,
+  1695
+ ],
+ "rowHeights": [
+  37,
+  12,
+  254,
+  450
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

@@ -1,0 +1,40 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260308_역대급 감동받은 순간 스피드 랭킹 TOP3 [JSlL2z_OSr4].mp4",
+ "id": "JSlL2z_OSr4",
+ "name": "20260308_역대급 감동받은 순간 스피드 랭킹 TOP3 [JSlL2z_OSr4].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 42.144218,
+ "headerBottom": 591,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "가족의 비밀",
+  "3": "남자의 의리"
+ },
+ "segments": {
+  "1": [
+   30.0,
+   42.144218
+  ],
+  "2": [
+   11.0,
+   30.0
+  ],
+  "3": [
+   0.0,
+   11.0
+  ]
+ },
+ "rows": [
+  1057
+ ],
+ "rowHeights": [
+  746
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260625_역대급 매운 음식 랭킹 TOP4 [W_zDQYEN1RA].mp4",
+ "id": "W_zDQYEN1RA",
+ "name": "20260625_역대급 매운 음식 랭킹 TOP4 [W_zDQYEN1RA].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 31.184399,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "젤리",
+  "3": "불닭",
+  "4": "불닭 고추"
+ },
+ "segments": {
+  "1": [
+   22.0,
+   31.184399
+  ],
+  "2": [
+   17.0,
+   22.0
+  ],
+  "3": [
+   6.0,
+   17.0
+  ],
+  "4": [
+   0.0,
+   6.0
+  ]
+ },
+ "rows": [
+  677,
+  1144
+ ],
+ "rowHeights": [
+  230,
+  492
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

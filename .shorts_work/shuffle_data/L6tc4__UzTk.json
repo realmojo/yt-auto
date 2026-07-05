@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260309_역대급 화상채팅 스피드 랭킹 TOP4 [L6tc4__UzTk].mp4",
+ "id": "L6tc4__UzTk",
+ "name": "20260309_역대급 화상채팅 스피드 랭킹 TOP4 [L6tc4__UzTk].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 53.823855,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "여장",
+  "3": "탈레반",
+  "4": "자강두천"
+ },
+ "segments": {
+  "1": [
+   43.0,
+   53.823855
+  ],
+  "2": [
+   36.0,
+   43.0
+  ],
+  "3": [
+   23.0,
+   36.0
+  ],
+  "4": [
+   0.0,
+   23.0
+  ]
+ },
+ "rows": [
+  876,
+  1623
+ ],
+ "rowHeights": [
+  664,
+  594
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

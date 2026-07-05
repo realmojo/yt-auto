@@ -1,0 +1,47 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260411_25살 개웃긴 한심좌 랭킹 [mbD3qKbBW3U].mp4",
+ "id": "mbD3qKbBW3U",
+ "name": "20260411_25살 개웃긴 한심좌 랭킹 [mbD3qKbBW3U].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 53.173696,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "모굴스키",
+  "3": "병따기",
+  "4": "돌황쳐"
+ },
+ "segments": {
+  "1": [
+   42.0,
+   53.173696
+  ],
+  "2": [
+   30.0,
+   42.0
+  ],
+  "3": [
+   12.0,
+   30.0
+  ],
+  "4": [
+   0.0,
+   12.0
+  ]
+ },
+ "rows": [
+  627,
+  894
+ ],
+ "rowHeights": [
+  54,
+  324
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

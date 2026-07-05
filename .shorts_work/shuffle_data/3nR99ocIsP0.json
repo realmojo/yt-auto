@@ -1,0 +1,44 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260313_역대급 개웃긴 개소리 스피드 랭킹 TOP3 [3nR99ocIsP0].mp4",
+ "id": "3nR99ocIsP0",
+ "name": "20260313_역대급 개웃긴 개소리 스피드 랭킹 TOP3 [3nR99ocIsP0].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 26.377868,
+ "headerBottom": 487,
+ "footerTop": 1570,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "진짜 한국 개",
+  "3": "한국 남자 팬"
+ },
+ "segments": {
+  "1": [
+   15.0,
+   26.377868
+  ],
+  "2": [
+   7.0,
+   15.0
+  ],
+  "3": [
+   0.0,
+   7.0
+  ]
+ },
+ "rows": [
+  548,
+  1093,
+  1464
+ ],
+ "rowHeights": [
+  60,
+  367,
+  144
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

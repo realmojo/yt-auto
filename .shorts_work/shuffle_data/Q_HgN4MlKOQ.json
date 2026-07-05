@@ -1,0 +1,53 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260512_26살 개웃긴 한심좌 랭킹 TOP4 [Q_HgN4MlKOQ].mp4",
+ "id": "Q_HgN4MlKOQ",
+ "name": "20260512_26살 개웃긴 한심좌 랭킹 TOP4 [Q_HgN4MlKOQ].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 37.035828,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "피자",
+  "3": "고양이",
+  "4": "주머니"
+ },
+ "segments": {
+  "1": [
+   26.0,
+   37.035828
+  ],
+  "2": [
+   15.0,
+   26.0
+  ],
+  "3": [
+   10.0,
+   15.0
+  ],
+  "4": [
+   0.0,
+   10.0
+  ]
+ },
+ "rows": [
+  849,
+  1351,
+  1432,
+  1523,
+  1841
+ ],
+ "rowHeights": [
+  725,
+  78,
+  48,
+  126,
+  30
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

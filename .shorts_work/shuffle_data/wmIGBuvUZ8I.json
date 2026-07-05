@@ -1,0 +1,52 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260306_역대급 스피드 VS 아기들 랭킹 TOP3 [wmIGBuvUZ8I].mp4",
+ "id": "wmIGBuvUZ8I",
+ "name": "20260306_역대급 스피드 VS 아기들 랭킹 TOP3 [wmIGBuvUZ8I].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 41.21542,
+ "headerBottom": 487,
+ "footerTop": 1920,
+ "N": 3,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "아기 울림",
+  "3": "NPC"
+ },
+ "segments": {
+  "1": [
+   31.0,
+   41.21542
+  ],
+  "2": [
+   12.0,
+   31.0
+  ],
+  "3": [
+   0.0,
+   12.0
+  ]
+ },
+ "rows": [
+  543,
+  731,
+  1072,
+  1425,
+  1629,
+  1695,
+  1791
+ ],
+ "rowHeights": [
+  113,
+  222,
+  452,
+  54,
+  62,
+  36,
+  137
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}

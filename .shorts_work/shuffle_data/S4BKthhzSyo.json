@@ -1,0 +1,53 @@
+{
+ "video": "/Users/realmojo/Desktop/m/yt-auto/ranking_original/20260319_역대급 누나들 만난 스피 [S4BKthhzSyo].mp4",
+ "id": "S4BKthhzSyo",
+ "name": "20260319_역대급 누나들 만난 스피 [S4BKthhzSyo].mp4",
+ "W": 1080,
+ "H": 1920,
+ "duration": 47.136508,
+ "headerBottom": 492,
+ "footerTop": 1920,
+ "N": 4,
+ "titles": {
+  "1": "제목 추천좀",
+  "2": "존예",
+  "3": "피카츄",
+  "4": "싸인"
+ },
+ "segments": {
+  "1": [
+   39.0,
+   47.136508
+  ],
+  "2": [
+   34.0,
+   39.0
+  ],
+  "3": [
+   19.0,
+   34.0
+  ],
+  "4": [
+   0.0,
+   19.0
+  ]
+ },
+ "rows": [
+  838,
+  1209,
+  1245,
+  1559,
+  1903
+ ],
+ "rowHeights": [
+  692,
+  18,
+  14,
+  562,
+  33
+ ],
+ "ok": true,
+ "warnings": [
+  "vision-corrected"
+ ]
+}
