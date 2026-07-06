@@ -68,6 +68,7 @@ const TTS = arg("tts", null); // 'qwen' | 'say' | null(자동: 키 있으면 qwe
 const QWEN_VOICE = arg("qwen-voice", "Cherry"); // Qwen 내장 음색(클론 없을 때)
 const IMAGE = arg("image", null);
 const VIDEO = arg("video", null); // 배경 레퍼런스 영상 경로(미지정 시 refs/<키워드>/videos/ 자동)
+const AUDIO = arg("audio", null); // 직접 만든 내레이션 오디오(있으면 TTS 를 건너뛰고 그대로 사용)
 const SKIP_SCRIPT = has("skip-script");
 const DRY_SCRIPT = has("dry-script");
 const FPS = parseInt(arg("fps", "30"), 10);
@@ -286,6 +287,29 @@ async function genScript(outDir, frames, kind) {
 
 // ---------- 2) 내레이션(TTS) ----------
 async function buildNarration(outDir, script) {
+  // 사용자가 직접 만든 내레이션 오디오가 있으면 TTS 를 건너뛰고 그대로 사용한다.
+  // 자막은 각 장면 내레이션 글자 수 비율로 오디오 전체 길이에 나눠 대략 싱크를 맞춘다.
+  if (AUDIO) {
+    if (!existsSync(AUDIO)) throw new Error(`오디오를 찾을 수 없음: ${AUDIO}`);
+    const narration = join(outDir, "narration.mp3");
+    await exec(FFMPEG, [
+      "-y", "-i", AUDIO,
+      "-ar", "44100", "-ac", "2", "-c:a", "libmp3lame", "-q:a", "2", narration,
+    ]);
+    const total = await probeDuration(narration);
+    const weights = script.scenes.map((s) => Math.max(1, (s.narration || "").trim().length));
+    const sum = weights.reduce((a, b) => a + b, 0) || 1;
+    const timings = [];
+    let cursor = 0;
+    for (let i = 0; i < script.scenes.length; i++) {
+      const dur = (total * weights[i]) / sum;
+      timings.push({ start: cursor, end: cursor + dur, caption: script.scenes[i].caption });
+      cursor += dur;
+    }
+    console.log(`🎙  직접 만든 내레이션 사용: ${narration} (${total.toFixed(1)}s, TTS 건너뜀)`);
+    return { narration, timings, durationSec: total };
+  }
+
   const ttsDir = join(outDir, ".tts");
   await rm(ttsDir, { recursive: true, force: true });
   await mkdir(ttsDir, { recursive: true });

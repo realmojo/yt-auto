@@ -1,25 +1,26 @@
 import { NextRequest } from "next/server";
 import { spawn } from "node:child_process";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { refDir } from "@/lib/shopping";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 600;
+export const maxDuration = 300;
 
 /**
- * make-short.mjs 를 자식 프로세스로 실행하고 진행 로그를 SSE 로 흘려보낸다.
- * body: { keyword, voice?, skipScript?, videoPath?, imagePath?, audioPath? }
- * 이벤트: {type:"log", line} / {type:"done", url} / {type:"error", message}
+ * 렌더 전 미리보기용 — make-short.mjs 를 --dry-script 로 실행해 대본만 생성한다.
+ * (선택한 레퍼런스 영상의 키프레임을 근거로 Claude 가 장면별 자막/내레이션 대본 작성)
+ * body: { keyword, videoPath?, imagePath? }
+ * 이벤트: {type:"log", line} / {type:"done", script} / {type:"error", message}
  */
 export async function POST(req: NextRequest) {
-  const { keyword, voice, skipScript, videoPath, imagePath, audioPath } = await req.json();
+  const { keyword, videoPath, imagePath } = await req.json();
   if (!keyword) return new Response("keyword 필요", { status: 400 });
 
-  const args = ["shopping/make-short.mjs", "--keyword", String(keyword)];
-  if (voice) args.push("--voice", String(voice));
-  if (skipScript) args.push("--skip-script");
+  const args = ["shopping/make-short.mjs", "--keyword", String(keyword), "--dry-script"];
   if (videoPath) args.push("--video", String(videoPath));
   else if (imagePath) args.push("--image", String(imagePath));
-  if (audioPath) args.push("--audio", String(audioPath)); // 직접 만든 내레이션(있으면 TTS 건너뜀)
 
   const enc = new TextEncoder();
   const stream = new ReadableStream({
@@ -28,12 +29,11 @@ export async function POST(req: NextRequest) {
       const send = (obj: unknown) => {
         if (!closed) controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
       };
-      send({ type: "log", line: `▶ 시작: ${keyword}` });
+      send({ type: "log", line: `▶ 대본 생성: ${keyword}` });
 
       const child = spawn("node", args, { cwd: process.cwd(), env: process.env });
       let last = "";
       const onChunk = (d: Buffer) => {
-        // 렌더 진행은 \r 로 갱신되므로 \r/\n 모두로 분리
         for (const seg of d.toString().split(/\r?\n|\r/)) {
           const line = seg.trim();
           if (line && line !== last) {
@@ -49,14 +49,18 @@ export async function POST(req: NextRequest) {
         closed = true;
         controller.close();
       });
-      child.on("close", (code) => {
+      child.on("close", async (code) => {
         if (code === 0) {
-          send({
-            type: "done",
-            url: `/api/shopping/file?keyword=${encodeURIComponent(keyword)}&name=short.mp4&t=${Date.now()}`,
-          });
+          try {
+            const script = JSON.parse(
+              await readFile(join(refDir(String(keyword)), "script.json"), "utf8"),
+            );
+            send({ type: "done", script });
+          } catch (e) {
+            send({ type: "error", message: `대본 파일을 읽지 못했습니다: ${(e as Error).message}` });
+          }
         } else {
-          send({ type: "error", message: `생성 실패 (exit ${code})` });
+          send({ type: "error", message: `대본 생성 실패 (exit ${code})` });
         }
         closed = true;
         controller.close();

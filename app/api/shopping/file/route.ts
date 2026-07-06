@@ -21,9 +21,10 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const keyword = searchParams.get("keyword");
   const name = basename(searchParams.get("name") || "short.mp4"); // traversal 방지
+  const sub = searchParams.get("sub") === "videos" ? "videos" : ""; // videos 하위만 허용(화이트리스트)
   if (!keyword) return new Response("keyword 필요", { status: 400 });
 
-  const file = join(refDir(keyword), name);
+  const file = join(refDir(keyword), sub, name);
   if (!existsSync(file)) return new Response("파일 없음", { status: 404 });
 
   const size = statSync(file).size;
