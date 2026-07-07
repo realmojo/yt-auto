@@ -73,3 +73,8 @@ shopping/rednote-auth.json
 shopping/.rednote-debug/
 shopping/refs/
 shopping/qwen-voice.json
+scripts/.taobao-profile/
+scripts/.taobao-debug/
+taobao_videos/
+shopping/ocrbox
+shopping/clips_desub/

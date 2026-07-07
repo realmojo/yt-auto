@@ -109,7 +109,7 @@ const Caption: React.FC<{ scenes: Scene[] }> = ({ scenes }) => {
   const local = (t - s.start) * fps;
   const pop = interpolate(local, [0, 7], [0.92, 1], { extrapolateRight: "clamp" });
   const rise = interpolate(local, [0, 7], [26, 0], { extrapolateRight: "clamp" });
-  // 흰색 자막 + 검은 외곽선(레퍼런스 스타일) — 화면 하단 1/3 지점
+  // 흰색 자막 + 검은 외곽선(레퍼런스 스타일) — 화면 정중앙
   const stroke = Math.max(2, Math.round(width * 0.004));
   const outline = [
     `-${stroke}px -${stroke}px 0 #000`,
@@ -119,7 +119,7 @@ const Caption: React.FC<{ scenes: Scene[] }> = ({ scenes }) => {
     `0 3px 10px rgba(0,0,0,0.5)`,
   ].join(", ");
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", padding: "0 60px 560px" }}>
+    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: "0 60px" }}>
       <div
         style={{
           fontFamily: FONT,

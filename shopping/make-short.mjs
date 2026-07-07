@@ -24,6 +24,12 @@ import {
   loadClonedVoice,
   FLASH_MODEL,
 } from "./qwen-tts.mjs";
+import {
+  elevenConfigured,
+  synthesize as elevenSynthesize,
+  EL_MODEL,
+  EL_VOICE,
+} from "./elevenlabs-tts.mjs";
 import { bundle } from "@remotion/bundler";
 import { selectComposition, renderMedia } from "@remotion/renderer";
 import { execFile } from "node:child_process";
@@ -68,6 +74,8 @@ const TTS = arg("tts", null); // 'qwen' | 'say' | null(자동: 키 있으면 qwe
 const QWEN_VOICE = arg("qwen-voice", "Cherry"); // Qwen 내장 음색(클론 없을 때)
 const IMAGE = arg("image", null);
 const VIDEO = arg("video", null); // 배경 레퍼런스 영상 경로(미지정 시 refs/<키워드>/videos/ 자동)
+const CLIPS = arg("clips", null); // 쉼표구분 영상 경로들 — 각 앞 5초를 순서대로 이어붙여 배경 몽타주
+const CLIP_SECS = parseInt(arg("clip-secs", "5"), 10); // 클립당 사용 초
 const AUDIO = arg("audio", null); // 직접 만든 내레이션 오디오(있으면 TTS 를 건너뛰고 그대로 사용)
 const SKIP_SCRIPT = has("skip-script");
 const DRY_SCRIPT = has("dry-script");
@@ -135,8 +143,56 @@ async function extractKeyframes(video, outDir, n = 5) {
   return frames;
 }
 
-/** 반환: { kind:'video'|'image', file:refs폴더내파일명, frames:[비전용 이미지경로들] } */
+/** 여러 클립의 앞 CLIP_SECS 초를 9:16로 잘라 순서대로 이어붙여 배경 몽타주(무음) 생성 */
+async function buildMontage(clips, outDir) {
+  const dir = join(outDir, ".clips");
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  const parts = [];
+  for (let i = 0; i < clips.length; i++) {
+    if (!existsSync(clips[i])) throw new Error(`클립을 찾을 수 없음: ${clips[i]}`);
+    const p = join(dir, `c${String(i).padStart(2, "0")}.mp4`);
+    await exec(FFMPEG, [
+      "-y", "-t", String(CLIP_SECS), "-i", clips[i], "-an",
+      "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1",
+      "-r", String(FPS), "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", p,
+    ]);
+    parts.push(p);
+  }
+  const listFile = join(dir, "list.txt");
+  await writeFile(listFile, parts.map((p) => `file '${p}'`).join("\n"));
+  const montage = join(dir, "montage.mp4");
+  await exec(FFMPEG, ["-y", "-f", "concat", "-safe", "0", "-i", listFile, "-c", "copy", montage]);
+  return montage;
+}
+
+/** 몽타주(또는 단일 영상)에서 대본 비전용 키프레임 추출 */
+async function framesFromClips(clips, outDir) {
+  const dir = join(outDir, ".frames");
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+  const frames = [];
+  const pick = clips.slice(0, 6); // 너무 많으면 앞에서 6개만
+  for (let i = 0; i < pick.length; i++) {
+    const f = join(dir, `k${i}.jpg`);
+    await exec(FFMPEG, ["-y", "-ss", String(Math.min(2, CLIP_SECS / 2)), "-i", pick[i], "-frames:v", "1", "-vf", "scale=512:-1", f]);
+    frames.push(f);
+  }
+  return frames;
+}
+
+/** 반환: { kind:'video'|'image', file?, raw?, clips?, frames:[비전용 이미지경로들] } */
 async function prepareBackground(outDir) {
+  // 다중 클립 몽타주(신규): --clips a.mp4,b.mp4,...
+  if (CLIPS) {
+    const paths = CLIPS.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((p) => (p.startsWith("/") ? p : join(ROOT, p)));
+    if (!paths.length) throw new Error("--clips 에 유효한 영상 경로가 없습니다.");
+    const frames = await framesFromClips(paths, outDir);
+    return { kind: "video", clips: paths, frames };
+  }
   if (IMAGE) {
     const img = await findImage(outDir);
     return { kind: "image", file: basename(img), frames: [img] };
@@ -171,6 +227,8 @@ async function finalizeVideo(raw, outDir, durationSec) {
 }
 
 // ---------- 1) 대본 생성 (Claude) ----------
+// 대본 구조: 후킹 → 문제 → 전환 → 기능 → 마무리 (이 순서)
+const PARTS = ["후킹", "문제", "전환", "기능", "마무리"];
 const SCRIPT_SCHEMA = {
   type: "object",
   additionalProperties: false,
@@ -182,8 +240,9 @@ const SCRIPT_SCHEMA = {
       items: {
         type: "object",
         additionalProperties: false,
-        required: ["narration", "caption"],
+        required: ["part", "narration", "caption"],
         properties: {
+          part: { type: "string", enum: PARTS },
           narration: { type: "string" },
           caption: { type: "string" },
         },
@@ -226,19 +285,24 @@ async function genScript(outDir, frames, kind) {
   const prompt = [
     `너는 한국 유튜브 쇼핑 쇼츠 카피라이터다.`,
     isVideo
-      ? `아래는 상품 데모 영상에서 시간 순서대로 뽑은 장면 프레임들이다. 이 영상 위에 얹을 한국어 내레이션+자막 대본을 만들어라.`
+      ? `아래는 여러 상품 데모 영상을 이어붙인 배경 몽타주에서 시간 순서대로 뽑은 장면 프레임들이다. 이 영상 위에 얹을 한국어 내레이션+자막 대본을 만들어라.`
       : `아래 상품 이미지를 보고 세로 쇼츠용 한국어 대본을 만들어라.`,
-    `완성 영상은 15~25초 세로 쇼츠다.`,
+    `완성 영상은 40~60초 세로 쇼츠다. 내레이션을 소리 내어 읽으면 대략 40~60초(한국어 약 250~450자)가 되도록 분량을 맞춰라.`,
     ``,
     `상품 키워드: ${KEYWORD}`,
     refBlock,
     ``,
+    `★ 대본은 반드시 다음 5단계 구조를 이 순서대로 따른다:`,
+    `  1) 후킹  — 스크롤을 멈추게 하는 강한 첫마디(질문/공감/충격).`,
+    `  2) 문제  — 시청자가 겪는 불편/고민을 콕 집어 공감.`,
+    `  3) 전환  — "그런데 이런 게 있다"며 상품으로 자연스럽게 넘어감.`,
+    `  4) 기능  — 상품의 핵심 기능/장점을 구체적으로(이 단계는 여러 장면으로 나눠도 됨).`,
+    `  5) 마무리 — 구매 욕구를 자극하며 행동유도로 마무리.`,
+    ``,
     `요구사항:`,
-    isVideo
-      ? `- scenes 는 프레임 순서(장면 흐름)에 맞춰 4~6개. 각 scene 의 narration 은 그 장면에서 벌어지는 일을 설명·판매하듯 이어져야 한다.`
-      : `- scenes 는 4~6개.`,
-    `- 각 scene 은 narration(내레이션 한 문장, 자연스러운 구어체)과 caption(화면 자막, 아주 짧게 12자 내외, 핵심 한 줄)로 구성.`,
-    `- 첫 scene 은 강한 후킹(질문/공감/충격). 마지막 scene 은 구매 욕구 자극.`,
+    `- 각 scene 에는 part(반드시 ${PARTS.join("/")} 중 하나)를 넣고, scenes 는 후킹→문제→전환→기능→마무리 순서로 진행해야 한다.`,
+    `- 후킹·문제·전환·마무리는 보통 각 1개 장면, 기능은 2~4개 장면으로 나눠 총 6~10개 scene 을 만든다.`,
+    `- 각 scene 은 narration(내레이션 1~2문장, 자연스러운 구어체)과 caption(화면 자막, 아주 짧게 12자 내외, 핵심 한 줄)로 구성.`,
     `- title 은 18자 이내 후킹 제목. cta 는 14자 이내 행동유도(예: "링크는 댓글에").`,
     `- 숫자·"무료/최저가/한정" 같은 세일즈 키워드를 자연스럽게(과장/허위 금지).`,
     `- hashtags 는 5개(# 없이 단어만). 반드시 한국어로.`,
@@ -318,10 +382,21 @@ async function buildNarration(outDir, script) {
   const silence = join(ttsDir, "silence.wav");
   await exec(FFMPEG, ["-y", "-f", "lavfi", "-i", `anullsrc=r=44100:cl=mono`, "-t", String(GAP), silence]);
 
-  // TTS 제공자 결정
-  const useQwen = TTS === "qwen" || (TTS !== "say" && qwenConfigured());
+  // TTS 제공자 결정 — 명시(--tts eleven|qwen|say)하거나, 자동(설정된 것 우선: eleven → qwen → say)
+  let provider;
+  if (TTS === "eleven" || TTS === "qwen" || TTS === "say") provider = TTS;
+  else provider = elevenConfigured() ? "eleven" : qwenConfigured() ? "qwen" : "say";
+  const useEleven = provider === "eleven";
+  const useQwen = provider === "qwen";
+
+  let elevenOpts = null;
   let qwenOpts = null;
-  if (useQwen) {
+  if (useEleven) {
+    if (!elevenConfigured())
+      throw new Error("ElevenLabs 미설정 — .env.local 에 ELEVENLABS_API_KEY, ELEVENLABS_VOICE_ID 필요");
+    elevenOpts = { model: EL_MODEL, voice: EL_VOICE };
+    console.log(`🎙  TTS: ElevenLabs (voice ${EL_VOICE} / ${EL_MODEL})`);
+  } else if (useQwen) {
     if (!qwenConfigured())
       throw new Error("Qwen TTS 미설정 — .env.local 에 DASHSCOPE_API_KEY, DASHSCOPE_WORKSPACE_ID 필요");
     const cloned = await loadClonedVoice();
@@ -339,7 +414,11 @@ async function buildNarration(outDir, script) {
   for (let i = 0; i < script.scenes.length; i++) {
     const text = script.scenes[i].narration;
     const wav = join(ttsDir, `s${i}.wav`);
-    if (useQwen) {
+    if (useEleven) {
+      const raw = join(ttsDir, `s${i}.mp3`);
+      await elevenSynthesize(text, elevenOpts, raw);
+      await exec(FFMPEG, ["-y", "-i", raw, "-ar", "44100", "-ac", "1", wav]);
+    } else if (useQwen) {
       const raw = join(ttsDir, `s${i}.audio`);
       await qwenSynthesize(text, qwenOpts, raw);
       await exec(FFMPEG, ["-y", "-i", raw, "-ar", "44100", "-ac", "1", wav]);
@@ -413,7 +492,8 @@ async function main() {
   await mkdir(outDir, { recursive: true });
 
   const bg = await prepareBackground(outDir);
-  console.log(`🎞  배경 소스: ${bg.kind} = ${bg.kind === "video" ? bg.raw : bg.file}`);
+  const bgDesc = bg.clips ? `클립 ${bg.clips.length}개 몽타주` : bg.kind === "video" ? bg.raw : bg.file;
+  console.log(`🎞  배경 소스: ${bg.kind} = ${bgDesc}`);
 
   // 1) 대본
   let script;
@@ -436,8 +516,13 @@ async function main() {
   let videoFile = null;
   let imageFile = null;
   if (bg.kind === "video") {
+    let raw = bg.raw;
+    if (bg.clips) {
+      console.log(`🎞  클립 ${bg.clips.length}개 × ${CLIP_SECS}s 몽타주 생성…`);
+      raw = await buildMontage(bg.clips, outDir);
+    }
     console.log("🎞  배경 영상 가공(loop/crop/무음)…");
-    videoFile = await finalizeVideo(bg.raw, outDir, durationSec);
+    videoFile = await finalizeVideo(raw, outDir, durationSec);
   } else {
     imageFile = bg.file;
   }

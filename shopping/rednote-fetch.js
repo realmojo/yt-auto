@@ -51,11 +51,14 @@ const arg = (name, def) => {
 }
 const LOGIN = has("login")
 const DOWNLOAD = has("download")
+const RESOLVE = has("resolve") // 다운로드 없이 각 노트의 영상 URL만 해석(스트리밍 재생용)
 const HEADFUL = has("headful")
 const KEYWORD = arg("keyword", argv.find((a) => !a.startsWith("--")) || "")
 const LIMIT = parseInt(arg("limit", "20"), 10)
 const IMAGE = arg("image", null)
 const MAX_SCROLL = parseInt(arg("scrolls", "40"), 10)
+const DOWNLOAD_NOTE = arg("download-note", null) // 노트 URL(xsec 포함) 하나를 열어 영상만 저장
+const DEST = arg("dest", null) // --download-note 저장 경로
 
 // ---------- 유틸 ----------
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -142,7 +145,10 @@ async function loginModalShown(page) {
   return await page
     .evaluate(() => {
       const t = document.body ? document.body.innerText : ""
-      return /手机号登录|扫码|登录后查看|新用户可直接登录|获取验证码/.test(t)
+      // 중국어/영어 로그인 모달 모두 감지(UI 언어가 영어일 수 있음)
+      return /手机号登录|扫码|登录后查看|新用户可直接登录|获取验证码|Log in to view|Log in with phone|Scan QR code|Enter verification code|New users can log in/i.test(
+        t,
+      )
     })
     .catch(() => false)
 }
@@ -281,6 +287,23 @@ async function downloadTo(context, url, dest) {
   fs.writeFileSync(dest, await resp.body())
 }
 
+// 노트 하나(xsecUrl)를 열어 원본 영상만 저장 — 쇼츠 생성 시 선택분만 다운로드용
+async function downloadOneNote() {
+  if (!DOWNLOAD_NOTE || !DEST) throw new Error("--download-note <노트URL> --dest <저장경로> 가 필요합니다.")
+  if (!fs.existsSync(AUTH_PATH))
+    throw new Error(`인증 파일이 없습니다: ${AUTH_PATH}\n먼저 'node shopping/rednote-fetch.js --login'.`)
+  const { browser, context } = await openBrowser(!HEADFUL, true)
+  try {
+    const v = await resolveVideo(context, { xsecUrl: DOWNLOAD_NOTE, url: DOWNLOAD_NOTE })
+    if (!v) throw new Error("영상 URL을 찾지 못했습니다.")
+    ensureDir(path.dirname(DEST))
+    await downloadTo(context, v, DEST)
+    console.log(`✓ 다운로드: ${DEST}`)
+  } finally {
+    await browser.close()
+  }
+}
+
 // ---------- 메인 ----------
 async function run() {
   if (!KEYWORD) {
@@ -315,7 +338,10 @@ async function run() {
 
   if (!(await isLoggedIn(page))) {
     await dumpHtml(page, "not_logged_in")
-    console.warn("⚠️ 로그인 상태가 아닌 것으로 보입니다. 결과가 비어있으면 --login 을 다시 실행하세요.")
+    await browser.close()
+    throw new Error(
+      "샤오홍수 로그인이 만료됐습니다(검색결과가 로그인 벽 뒤에 있음). 터미널에서 'npm run rednote:login' 으로 다시 로그인하세요.",
+    )
   }
 
   console.log("📜 스크롤하며 수집 중…")
@@ -349,6 +375,20 @@ async function run() {
     }
   }
 
+  // 영상 URL만 해석(다운로드X) — 갤러리 스트리밍 재생용
+  if (RESOLVE && !DOWNLOAD && notes.length) {
+    console.log("\n🔗 영상 URL 해석(다운로드 없이)…")
+    for (let i = 0; i < notes.length; i++) {
+      try {
+        notes[i].videoUrl = (await resolveVideo(context, notes[i])) || ""
+      } catch {
+        notes[i].videoUrl = ""
+      }
+      console.log(`  ${i + 1}/${notes.length} ${notes[i].id} ${notes[i].videoUrl ? "✓" : "✗ URL없음"}`)
+      await sleep(rnd(500, 1200))
+    }
+  }
+
   // 결과 저장
   const result = {
     keyword: KEYWORD,
@@ -370,6 +410,7 @@ async function run() {
   try {
     console.log(`[${stamp()}] rednote-fetch 시작`)
     if (LOGIN) await login()
+    else if (DOWNLOAD_NOTE) await downloadOneNote()
     else await run()
     console.log(`[${stamp()}] 완료`)
   } catch (e) {

@@ -1,66 +1,84 @@
 import { NextRequest } from "next/server";
 import { spawn } from "node:child_process";
+import { downloadSelectedClips, Selected } from "@/lib/shopping-clips";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 600;
+export const maxDuration = 900;
 
 /**
- * make-short.mjs 를 자식 프로세스로 실행하고 진행 로그를 SSE 로 흘려보낸다.
- * body: { keyword, voice?, skipScript?, videoPath?, imagePath?, audioPath? }
+ * ② 쇼츠 생성 — 선택한 영상들(순서 유지)을 각 5초로 이어붙인 몽타주 배경 위에
+ * 대본 자막을 얹고, 내레이션은 (있으면) 업로드한 음성으로, 없으면 TTS 로 렌더한다.
+ * body: { keyword, selected:[{source,id,videoRef}], voice?, skipScript?, audioPath? }
  * 이벤트: {type:"log", line} / {type:"done", url} / {type:"error", message}
  */
 export async function POST(req: NextRequest) {
-  const { keyword, voice, skipScript, videoPath, imagePath, audioPath } = await req.json();
-  if (!keyword) return new Response("keyword 필요", { status: 400 });
-
-  const args = ["shopping/make-short.mjs", "--keyword", String(keyword)];
-  if (voice) args.push("--voice", String(voice));
-  if (skipScript) args.push("--skip-script");
-  if (videoPath) args.push("--video", String(videoPath));
-  else if (imagePath) args.push("--image", String(imagePath));
-  if (audioPath) args.push("--audio", String(audioPath)); // 직접 만든 내레이션(있으면 TTS 건너뜀)
+  const { keyword, selected, voice, skipScript, audioPath } = await req.json();
+  const kw = String(keyword || "").trim();
+  if (!kw) return new Response("keyword 필요", { status: 400 });
+  const sel: Selected[] = Array.isArray(selected) ? selected : [];
+  if (!sel.length) return new Response("선택한 영상이 없습니다", { status: 400 });
 
   const enc = new TextEncoder();
   const stream = new ReadableStream({
     start(controller) {
       let closed = false;
-      const send = (obj: unknown) => {
-        if (!closed) controller.enqueue(enc.encode(`data: ${JSON.stringify(obj)}\n\n`));
+      const send = (o: unknown) => {
+        if (!closed) controller.enqueue(enc.encode(`data: ${JSON.stringify(o)}\n\n`));
       };
-      send({ type: "log", line: `▶ 시작: ${keyword}` });
+      const log = (line: string) => send({ type: "log", line });
+      const fail = (message: string) => {
+        send({ type: "error", message });
+        closed = true;
+        controller.close();
+      };
 
-      const child = spawn("node", args, { cwd: process.cwd(), env: process.env });
-      let last = "";
-      const onChunk = (d: Buffer) => {
-        // 렌더 진행은 \r 로 갱신되므로 \r/\n 모두로 분리
-        for (const seg of d.toString().split(/\r?\n|\r/)) {
-          const line = seg.trim();
-          if (line && line !== last) {
-            last = line;
-            send({ type: "log", line });
-          }
-        }
-      };
-      child.stdout.on("data", onChunk);
-      child.stderr.on("data", onChunk);
-      child.on("error", (e) => {
-        send({ type: "error", message: e.message });
-        closed = true;
-        controller.close();
-      });
-      child.on("close", (code) => {
-        if (code === 0) {
-          send({
-            type: "done",
-            url: `/api/shopping/file?keyword=${encodeURIComponent(keyword)}&name=short.mp4&t=${Date.now()}`,
+      (async () => {
+        try {
+          log(`▶ 선택 ${sel.length}개 · 쇼츠 생성 시작 (${sel.length * 5}초 목표)`);
+          const clips = await downloadSelectedClips(kw, sel, log);
+          if (!clips.length) return fail("영상을 하나도 받지 못했습니다. 로그인/선택을 확인하세요.");
+          log(`✓ 클립 ${clips.length}개 준비 — 렌더 시작`);
+
+          const args = [
+            "shopping/make-short.mjs",
+            "--keyword", kw,
+            "--clips", clips.join(","),
+          ];
+          if (voice) args.push("--voice", String(voice));
+          if (skipScript) args.push("--skip-script");
+          if (audioPath) args.push("--audio", String(audioPath)); // 업로드 음성(있으면 TTS 건너뜀)
+
+          const child = spawn("node", args, { cwd: process.cwd(), env: process.env });
+          let last = "";
+          const onChunk = (d: Buffer) => {
+            for (const seg of d.toString().split(/\r?\n|\r/)) {
+              const line = seg.trim();
+              if (line && line !== last) {
+                last = line;
+                log(line);
+              }
+            }
+          };
+          child.stdout.on("data", onChunk);
+          child.stderr.on("data", onChunk);
+          child.on("error", (e) => fail(e.message));
+          child.on("close", (code) => {
+            if (code === 0) {
+              send({
+                type: "done",
+                url: `/api/shopping/file?keyword=${encodeURIComponent(kw)}&name=short.mp4&t=${Date.now()}`,
+              });
+              closed = true;
+              controller.close();
+            } else {
+              fail(`생성 실패 (exit ${code})`);
+            }
           });
-        } else {
-          send({ type: "error", message: `생성 실패 (exit ${code})` });
+        } catch (e) {
+          fail((e as Error).message);
         }
-        closed = true;
-        controller.close();
-      });
+      })();
     },
   });
 

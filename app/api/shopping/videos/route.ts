@@ -1,83 +1,82 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readdir, readFile } from "node:fs/promises";
-import { join, basename } from "node:path";
-import { refDir, slug } from "@/lib/shopping";
+import { join } from "node:path";
+import { refDir } from "@/lib/shopping";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const VIDEO_EXT = /\.(mp4|mov|webm|mkv)$/i;
-const UPLOAD_RE = /^_upload\.(mp4|mov|webm|mkv)$/i;
-
 type Item = {
-  name: string;
-  path: string; // 프로젝트 루트 기준 경로(make-short --video 로 그대로 전달)
-  src: string; // 미리보기 재생용(file 라우트)
+  source: "rednote" | "taobao";
+  key: string; // 고유키 `${source}:${id}`
+  id: string;
   title: string;
-  author: string;
-  likes: string;
-  cover: string;
-  uploaded: boolean;
+  cover: string; // 프록시 커버 URL(없으면 "")
+  streamUrl: string; // 갤러리 재생용 스트리밍 프록시 URL(직접 영상URL 있을 때만)
+  videoRef: string; // 생성 시 다운로드용 — taobao: 영상URL, rednote: 노트(xsec)URL
+  downloaded: boolean; // clips/ 에 이미 받아둔 게 있는지
 };
 
+const proxied = (u: string, src: string) =>
+  u ? `/api/shopping/cover?u=${encodeURIComponent(u)}&src=${src}` : "";
+const streamed = (u: string, src: string) =>
+  u ? `/api/shopping/stream?u=${encodeURIComponent(u)}&src=${src}` : "";
+
 /**
- * 키워드 폴더에 받아둔 레퍼런스 영상 목록 + 메타(index.json)를 반환.
- * 사용자가 쇼츠 배경으로 쓸 영상을 직접 고를 수 있게 UI 에 뿌린다.
+ * 검색으로 수집(다운로드X)한 항목 메타를 반환.
+ *  - videos: 샤오홍수(RedNote) 노트  - taobao: 타오바오 상품
+ * 각 항목은 커버(프록시)와 videoRef(생성 시 다운로드용)를 갖는다.
  */
 export async function GET(req: NextRequest) {
   const keyword = new URL(req.url).searchParams.get("keyword")?.trim();
-  if (!keyword) return NextResponse.json({ videos: [] });
+  if (!keyword) return NextResponse.json({ videos: [], taobao: [] });
 
   const dir = refDir(keyword);
-  const s = slug(keyword);
-  const src = (name: string, sub?: string) =>
-    `/api/shopping/file?keyword=${encodeURIComponent(keyword)}${sub ? `&sub=${sub}` : ""}&name=${encodeURIComponent(name)}`;
+  const clipNames = (await readdir(join(dir, "clips")).catch(() => [])) as string[];
+  const isDownloaded = (source: string, id: string) =>
+    clipNames.some((f) => f.endsWith(`_${source}_${id}.mp4`));
 
-  // index.json 의 노트 메타를 파일명으로 매핑(제목/작성자/좋아요/커버)
-  const meta: Record<string, { title?: string; author?: string; likes?: string; cover?: string }> = {};
+  // ---- 샤오홍수 (index.json 의 notes) ----
+  const videos: Item[] = [];
   try {
     const idx = JSON.parse(await readFile(join(dir, "index.json"), "utf8"));
-    for (const n of idx.notes || []) {
-      if (n.videoFile) meta[basename(n.videoFile)] = n;
+    for (const n of (idx.notes || []).filter((x: { isVideo?: boolean }) => x.isVideo !== false)) {
+      if (!n.id) continue;
+      videos.push({
+        source: "rednote",
+        key: `rednote:${n.id}`,
+        id: n.id,
+        title: (n.title || "").trim(),
+        cover: proxied(n.cover || "", "rednote"),
+        streamUrl: streamed(n.videoUrl || "", "rednote"),
+        videoRef: n.xsecUrl || n.url || "",
+        downloaded: isDownloaded("rednote", n.id),
+      });
     }
   } catch {
-    /* index.json 없으면 메타 없이 진행 */
+    /* 없으면 빈 배열 */
   }
 
-  const out: Item[] = [];
-
-  // 1) 샤오홍수에서 받은 레퍼런스 영상들
-  const vids = (await readdir(join(dir, "videos")).catch(() => []))
-    .filter((f) => VIDEO_EXT.test(f))
-    .sort();
-  for (const f of vids) {
-    const m = meta[f] || {};
-    out.push({
-      name: f,
-      path: `shopping/refs/${s}/videos/${f}`,
-      src: src(f, "videos"),
-      title: (m.title || "").trim(),
-      author: (m.author || "").trim(),
-      likes: (m.likes || "").trim(),
-      cover: (m.cover || "").trim(),
-      uploaded: false,
-    });
+  // ---- 타오바오 (taobao/index.json 의 items) ----
+  const taobao: Item[] = [];
+  try {
+    const tIdx = JSON.parse(await readFile(join(dir, "taobao", "index.json"), "utf8"));
+    for (const it of tIdx.items || []) {
+      if (!it.id || !it.videoUrl) continue;
+      taobao.push({
+        source: "taobao",
+        key: `taobao:${it.id}`,
+        id: it.id,
+        title: (it.title || "").trim(),
+        cover: proxied(it.cover || "", "taobao"),
+        streamUrl: streamed(it.videoUrl, "taobao"),
+        videoRef: it.videoUrl,
+        downloaded: isDownloaded("taobao", it.id),
+      });
+    }
+  } catch {
+    /* 없으면 빈 배열 */
   }
 
-  // 2) 직접 업로드한 영상(_upload.*)이 있으면 함께 노출
-  const up = (await readdir(dir).catch(() => [])).find((f) => UPLOAD_RE.test(f));
-  if (up) {
-    out.push({
-      name: up,
-      path: `shopping/refs/${s}/${up}`,
-      src: src(up),
-      title: "직접 업로드",
-      author: "",
-      likes: "",
-      cover: "",
-      uploaded: true,
-    });
-  }
-
-  return NextResponse.json({ videos: out });
+  return NextResponse.json({ videos, taobao });
 }
