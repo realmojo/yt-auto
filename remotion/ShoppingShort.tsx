@@ -55,6 +55,51 @@ const VideoBackground: React.FC<{ src: string }> = ({ src }) => (
 
 const HILITE = /(\d[\d,]*원|\d+(?:\.\d+)?%|\d+(?:개|배|위|시간|분|초|일|년|만|천|명)|무료|최저가|역대급|단독|한정|초특가)/g;
 
+/** 한 줄 폭을 em 단위로 근사(폰트 없이) — 한글/한자≈1.0, 공백≈0.34, 영숫자≈0.58.
+ * 실제 측정 대신 근사해 자막을 한 줄 폭에 맞춰 나누기 위한 계산에 쓴다. */
+function estLineWidthEm(text: string): number {
+  let w = 0;
+  for (const ch of text) {
+    if (ch === " ") w += 0.34;
+    else if (/[ᄀ-ᇿ㄰-㆏가-힣぀-ヿ一-鿿]/.test(ch)) w += 1.0;
+    else if (/[.,!?~·・…'"]/.test(ch)) w += 0.4;
+    else if (/[a-zA-Z0-9]/.test(ch)) w += 0.58;
+    else w += 0.6;
+  }
+  return w;
+}
+
+/** 긴 자막을 "한 줄에 들어가는" 조각들로 균형 있게 분할(단어 단위, 글자 크기는 유지).
+ * 한 줄에 다 들어가면 그대로 1개. 넘치면 필요한 개수로 나눠 순차 표시한다. */
+function chunkCaption(text: string, maxEm: number): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length <= 1) return [text];
+  const SP = 0.34;
+  const em = words.map(estLineWidthEm);
+  const totalEm = em.reduce((a, b) => a + b, 0) + SP * (words.length - 1);
+  if (totalEm <= maxEm) return [text]; // 한 줄에 다 들어감 → 나누지 않음
+  const count = Math.max(2, Math.ceil(totalEm / maxEm));
+  const target = totalEm / count; // 조각들을 균형 있게
+  const chunks: string[] = [];
+  let cur: string[] = [];
+  let curEm = 0;
+  for (let i = 0; i < words.length; i++) {
+    const add = (cur.length ? SP : 0) + em[i];
+    const overflow = cur.length > 0 && curEm + add > maxEm;
+    const balanced = cur.length > 0 && curEm >= target && chunks.length < count - 1;
+    if (overflow || balanced) {
+      chunks.push(cur.join(" "));
+      cur = [words[i]];
+      curEm = em[i];
+    } else {
+      cur.push(words[i]);
+      curEm += add;
+    }
+  }
+  if (cur.length) chunks.push(cur.join(" "));
+  return chunks;
+}
+
 function renderCaption(text: string) {
   const out: React.ReactNode[] = [];
   let last = 0;
@@ -106,9 +151,6 @@ const Caption: React.FC<{ scenes: Scene[] }> = ({ scenes }) => {
   const idx = scenes.findIndex((s) => t >= s.start && t < s.end);
   if (idx < 0) return null;
   const s = scenes[idx];
-  const local = (t - s.start) * fps;
-  const pop = interpolate(local, [0, 7], [0.92, 1], { extrapolateRight: "clamp" });
-  const rise = interpolate(local, [0, 7], [26, 0], { extrapolateRight: "clamp" });
   // 흰색 자막 + 두꺼운 검정 외곽선 + 살짝 그림자(레퍼런스 썸네일 스타일) — 화면 정중앙
   const st = Math.max(3, Math.round(width * 0.0075)); // 외곽선 두께
   const outline = [
@@ -124,22 +166,35 @@ const Caption: React.FC<{ scenes: Scene[] }> = ({ scenes }) => {
     // 살짝 떨어지는 부드러운 그림자
     `0 ${Math.round(st * 1.3)}px ${Math.round(st * 2.2)}px rgba(0,0,0,0.55)`,
   ].join(", ");
+  // 글자 크기는 고정(줄이지 않음). 한 줄에 안 들어가면 여러 조각으로 나눠 순차 표시.
+  const base = Math.round(width * 0.072);
+  const maxEm = (width - 140) / base / 1.04; // 한 조각이 넘지 않을 em 폭
+  const capText = s.caption.replace(/\s*\n\s*/g, " ").trim();
+  const chunks = chunkCaption(capText, maxEm);
+  const dur = Math.max(0.0001, s.end - s.start);
+  const seg = dur / chunks.length; // 장면 시간을 조각 수로 등분
+  const local = t - s.start;
+  const ci = Math.min(chunks.length - 1, Math.max(0, Math.floor(local / seg)));
+  // 각 조각이 나타날 때 살짝 팝인
+  const inFrames = (local - ci * seg) * fps;
+  const pop = interpolate(inFrames, [0, 7], [0.92, 1], { extrapolateRight: "clamp" });
+  const rise = interpolate(inFrames, [0, 7], [26, 0], { extrapolateRight: "clamp" });
   return (
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: "0 60px" }}>
       <div
         style={{
           fontFamily: FONT,
-          fontSize: Math.round(width * 0.072),
+          fontSize: base,
           lineHeight: 1.28,
           color: "#ffffff",
           textAlign: "center",
           fontWeight: 900,
           textShadow: outline,
           transform: `scale(${pop}) translateY(${rise}px)`,
-          maxWidth: "94%",
+          whiteSpace: "nowrap", // 한 줄 고정
         }}
       >
-        {renderCaption(s.caption)}
+        {renderCaption(chunks[ci])}
       </div>
     </AbsoluteFill>
   );
