@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { spawn } from "node:child_process";
-import { downloadSelectedClips, Selected } from "@/lib/shopping-clips";
+import { downloadSelectedClips, cleanSubtitles, Selected } from "@/lib/shopping-clips";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,11 +9,11 @@ export const maxDuration = 900;
 /**
  * ② 쇼츠 생성 — 선택한 영상들(순서 유지)을 각 5초로 이어붙인 몽타주 배경 위에
  * 대본 자막을 얹고, 내레이션은 (있으면) 업로드한 음성으로, 없으면 TTS 로 렌더한다.
- * body: { keyword, selected:[{source,id,videoRef}], voice?, skipScript?, audioPath? }
+ * body: { keyword, selected:[{source,id,videoRef}], voice?, skipScript?, audioPath?, cleanSubs? }
  * 이벤트: {type:"log", line} / {type:"done", url} / {type:"error", message}
  */
 export async function POST(req: NextRequest) {
-  const { keyword, selected, voice, skipScript, audioPath } = await req.json();
+  const { keyword, selected, voice, skipScript, audioPath, cleanSubs } = await req.json();
   const kw = String(keyword || "").trim();
   if (!kw) return new Response("keyword 필요", { status: 400 });
   const sel: Selected[] = Array.isArray(selected) ? selected : [];
@@ -36,8 +36,14 @@ export async function POST(req: NextRequest) {
       (async () => {
         try {
           log(`▶ 선택 ${sel.length}개 · 쇼츠 생성 시작 (${sel.length * 5}초 목표)`);
-          const clips = await downloadSelectedClips(kw, sel, log);
+          let clips = await downloadSelectedClips(kw, sel, log);
           if (!clips.length) return fail("영상을 하나도 받지 못했습니다. 로그인/선택을 확인하세요.");
+
+          // 원본 번인 자막 자동 제거(기본 ON) — desub.py(OCR + LaMa). 미설치/실패 시 원본 사용.
+          if (cleanSubs !== false) {
+            log("🧹 원본 자막 제거 중… (첫 실행은 시간이 걸릴 수 있어요)");
+            clips = await cleanSubtitles(clips, log);
+          }
           log(`✓ 클립 ${clips.length}개 준비 — 렌더 시작`);
 
           const args = [

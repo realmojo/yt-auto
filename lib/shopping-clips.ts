@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { mkdir, writeFile, stat, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, dirname, basename } from "node:path";
 import { refDir, slug } from "@/lib/shopping";
 
 export type Selected = { source: "taobao" | "rednote"; id: string; videoRef: string };
@@ -84,6 +84,80 @@ export async function downloadSelectedClips(
       }
     } else {
       onLog(`⚠️ 다운로드 실패(건너뜀): ${it.source} ${it.id}`);
+    }
+  }
+  return out;
+}
+
+/** desub.py 를 실행할 파이썬 — 전용 venv(shopping/.venv-desub) 우선, 없으면 python3. */
+function desubPython(): string {
+  if (process.env.PYTHON_BIN) return process.env.PYTHON_BIN;
+  const venv = join(process.cwd(), "shopping", ".venv-desub", "bin", "python");
+  return existsSync(venv) ? venv : "python3";
+}
+
+/** desub 실행 가능 여부(ocrbox 바이너리 + iopaint) 사전 점검. */
+async function desubReady(onLog: (l: string) => void): Promise<boolean> {
+  const ocrbox = join(process.cwd(), "shopping", "ocrbox");
+  if (!existsSync(ocrbox)) {
+    onLog("⚠️ 자막 제거 건너뜀 — shopping/ocrbox 없음 (npm run desub:setup 필요)");
+    return false;
+  }
+  const code = await new Promise<number>((resolve) => {
+    const c = spawn(desubPython(), ["-c", "import iopaint"], { cwd: process.cwd(), env: process.env });
+    c.on("error", () => resolve(1));
+    c.on("close", (x) => resolve(x ?? 1));
+  });
+  if (code !== 0) {
+    onLog("⚠️ 자막 제거 건너뜀 — iopaint 미설치 (npm run desub:setup 필요)");
+    return false;
+  }
+  return true;
+}
+
+/**
+ * 각 클립의 번인(하드코딩) 자막을 shopping/desub.py(Apple Vision OCR + LaMa 인페인팅)로 제거.
+ * 결과는 같은 폴더에 clean_<이름>.mp4 로 캐시. 실패/미설치 시 원본 경로로 폴백.
+ * 반환: 정제본(또는 원본) 프로젝트 루트 기준 경로 배열(입력 순서 유지).
+ */
+export async function cleanSubtitles(
+  clips: string[],
+  onLog: (l: string) => void,
+): Promise<string[]> {
+  if (!clips.length) return clips;
+  if (!(await desubReady(onLog))) return clips; // 전부 원본 사용
+  const python = desubPython();
+  const out: string[] = [];
+  for (const rel of clips) {
+    const abs = join(process.cwd(), rel);
+    const cleanAbs = join(dirname(abs), `clean_${basename(abs)}`);
+    const cleanRel = join(dirname(rel), `clean_${basename(rel)}`);
+    // 캐시 재사용
+    if (existsSync(cleanAbs)) {
+      try {
+        if ((await stat(cleanAbs)).size > 1000) {
+          onLog(`✓ 자막제거 캐시: ${basename(abs)}`);
+          out.push(cleanRel);
+          continue;
+        }
+      } catch {
+        /* 다시 생성 */
+      }
+    }
+    onLog(`🧹 자막 제거: ${basename(abs)}`);
+    const code = await run(python, ["shopping/desub.py", abs, cleanAbs], (l) => onLog(`[desub] ${l}`));
+    let ok = false;
+    if (code === 0 && existsSync(cleanAbs)) {
+      try {
+        ok = (await stat(cleanAbs)).size > 1000;
+      } catch {
+        ok = false;
+      }
+    }
+    if (ok) out.push(cleanRel);
+    else {
+      onLog(`⚠️ 자막 제거 실패 — 원본 사용: ${basename(abs)}`);
+      out.push(rel);
     }
   }
   return out;

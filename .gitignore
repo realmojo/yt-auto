@@ -78,3 +78,7 @@ scripts/.taobao-debug/
 taobao_videos/
 shopping/ocrbox
 shopping/clips_desub/
+
+# desub(자막 제거) 전용 파이썬 venv + 컴파일된 OCR 바이너리
+shopping/.venv-desub/
+shopping/ocrbox

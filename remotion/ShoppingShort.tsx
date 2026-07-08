@@ -109,25 +109,31 @@ const Caption: React.FC<{ scenes: Scene[] }> = ({ scenes }) => {
   const local = (t - s.start) * fps;
   const pop = interpolate(local, [0, 7], [0.92, 1], { extrapolateRight: "clamp" });
   const rise = interpolate(local, [0, 7], [26, 0], { extrapolateRight: "clamp" });
-  // 흰색 자막 + 검은 외곽선(레퍼런스 스타일) — 화면 정중앙
-  const stroke = Math.max(2, Math.round(width * 0.004));
+  // 흰색 자막 + 두꺼운 검정 외곽선 + 살짝 그림자(레퍼런스 썸네일 스타일) — 화면 정중앙
+  const st = Math.max(3, Math.round(width * 0.0075)); // 외곽선 두께
   const outline = [
-    `-${stroke}px -${stroke}px 0 #000`,
-    `${stroke}px -${stroke}px 0 #000`,
-    `-${stroke}px ${stroke}px 0 #000`,
-    `${stroke}px ${stroke}px 0 #000`,
-    `0 3px 10px rgba(0,0,0,0.5)`,
+    // 8방향으로 촘촘히 깔아 매끈한 두꺼운 검정 테두리
+    `-${st}px 0 0 #000`,
+    `${st}px 0 0 #000`,
+    `0 -${st}px 0 #000`,
+    `0 ${st}px 0 #000`,
+    `-${st}px -${st}px 0 #000`,
+    `${st}px -${st}px 0 #000`,
+    `-${st}px ${st}px 0 #000`,
+    `${st}px ${st}px 0 #000`,
+    // 살짝 떨어지는 부드러운 그림자
+    `0 ${Math.round(st * 1.3)}px ${Math.round(st * 2.2)}px rgba(0,0,0,0.55)`,
   ].join(", ");
   return (
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: "0 60px" }}>
       <div
         style={{
           fontFamily: FONT,
-          fontSize: Math.round(width * 0.066),
-          lineHeight: 1.3,
+          fontSize: Math.round(width * 0.072),
+          lineHeight: 1.28,
           color: "#ffffff",
           textAlign: "center",
-          fontWeight: 400,
+          fontWeight: 900,
           textShadow: outline,
           transform: `scale(${pop}) translateY(${rise}px)`,
           maxWidth: "94%",

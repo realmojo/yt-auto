@@ -18,7 +18,9 @@
     "upload:all": "node upload_scripts/run-all.js",
     "rednote:login": "node shopping/rednote-fetch.js --login",
     "rednote": "node shopping/rednote-fetch.js",
-    "short": "node shopping/make-short.mjs"
+    "short": "node shopping/make-short.mjs",
+    "desub:setup": "swiftc shopping/ocrbox.swift -o shopping/ocrbox && python3.10 -m venv shopping/.venv-desub && shopping/.venv-desub/bin/pip install -U pip iopaint",
+    "desub": "shopping/.venv-desub/bin/python shopping/desub.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.104.1",

@@ -204,6 +204,7 @@ export default function ShoppingPage() {
   const [script, setScript] = useState<Script | null>(null);
   const [scriptText, setScriptText] = useState(""); // 직접 입력/수정용 대본
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [cleanSubs, setCleanSubs] = useState(true); // 원본 번인 자막 자동 제거
   const [copied, setCopied] = useState(false);
   const [sampling, setSampling] = useState(false);
   const logRef = useRef<HTMLDivElement>(null);
@@ -461,6 +462,7 @@ export default function ShoppingPage() {
           voice,
           skipScript: reuseScript,
           audioPath,
+          cleanSubs,
         }),
       });
       await consumeSSE(res, (evt) => {
@@ -771,6 +773,15 @@ export default function ShoppingPage() {
                 disabled={busy}
               />
               기존 대본 재사용
+            </label>
+            <label className="flex items-center gap-2 pb-1 text-sm" title="원본 영상에 박힌 중국어 자막을 OCR+AI 인페인팅으로 제거">
+              <input
+                type="checkbox"
+                checked={cleanSubs}
+                onChange={(e) => setCleanSubs(e.target.checked)}
+                disabled={busy}
+              />
+              원본 자막 자동 제거
             </label>
           </div>
 

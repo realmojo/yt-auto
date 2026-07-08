@@ -13,6 +13,10 @@ WORK = os.path.dirname(os.path.abspath(__file__))
 OCRBOX = os.path.join(WORK, "ocrbox")
 FFMPEG = os.environ.get("FFMPEG_BIN", "/opt/homebrew/bin/ffmpeg")
 FFPROBE = os.environ.get("FFPROBE_BIN", "/opt/homebrew/bin/ffprobe")
+# iopaint CLI — 이 스크립트를 실행한 파이썬(venv 등) 옆의 실행파일을 우선 사용
+IOPAINT = os.path.join(os.path.dirname(sys.executable), "iopaint")
+if not os.path.exists(IOPAINT):
+    IOPAINT = "iopaint"
 
 CJK = re.compile(r"[㐀-鿿豈-﫿぀-ヿ]")  # 한자/가나(중국어 자막 위주)
 
@@ -157,7 +161,7 @@ def main():
 
         # 4) crop 만 LaMa 인페인팅 → 원본 프레임의 crop 위치에 붙여넣기
         if sub_names:
-            sh(["iopaint", "run", "--model=lama", "--device=mps",
+            sh([IOPAINT, "run", "--model=lama", "--device=mps",
                 f"--image={indir}", f"--mask={mskdir}", f"--output={outdir}"])
             for name in sub_names:
                 op = os.path.join(outdir, name)
