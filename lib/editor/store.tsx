@@ -266,6 +266,82 @@ export function createEditorStore(
       set({ selectedIds: [right.id] });
     },
 
+    /** 클립을 interval 초 간격으로 균등 분할. 영상/오디오는 trimStart 를 이어붙여
+     * 원본이 조각들을 통해 끊김 없이 재생되게 한다. (예: 15초 영상 · 3초 간격 → 5개) */
+    splitEvery: (clipId, interval) => {
+      const clip = findClip(clipId);
+      if (!clip) return;
+      const seg = Math.max(MIN_CLIP_DURATION, interval || 0);
+      const total = clip.duration;
+      // 조각 길이 목록 — 마지막 자투리가 최소 길이보다 짧으면 직전 조각에 합친다.
+      const durs: number[] = [];
+      let remaining = total;
+      while (remaining > 1e-3) {
+        const d = Math.min(seg, remaining);
+        durs.push(d);
+        remaining -= d;
+      }
+      if (durs.length >= 2 && durs[durs.length - 1] < MIN_CLIP_DURATION) {
+        durs[durs.length - 2] += durs.pop() as number;
+      }
+      if (durs.length <= 1) return; // 나눌 게 없음
+      const isMedia = clip.type === "video" || clip.type === "audio";
+      const baseTrim = isMedia ? (clip as { trimStart: number }).trimStart : 0;
+      const pieces: Clip[] = [];
+      let offset = 0;
+      for (let i = 0; i < durs.length; i++) {
+        const piece = {
+          ...clip,
+          id: i === 0 ? clip.id : uid("clp"),
+          start: clip.start + offset,
+          duration: durs[i],
+          name: i === 0 ? clip.name : `${clip.name} ${i + 1}`,
+        } as Clip;
+        if (isMedia) (piece as { trimStart: number }).trimStart = baseTrim + offset;
+        pieces.push(piece);
+        offset += durs[i];
+      }
+      commitProject({
+        ...state.project,
+        clips: state.project.clips.flatMap((c) => (c.id === clipId ? pieces : [c])),
+      });
+      set({ selectedIds: pieces.map((p) => p.id) });
+    },
+
+    /** 영상/오디오 클립을 '남길 구간'(클립 로컬 시간, 0=클립 시작)들로만 재구성해
+     * 사이의 무음(빈 구간)을 제거하고 붙여 이어붙인다. (자동 무음 컷편집용) */
+    replaceClipWithSegments: (clipId, segments) => {
+      const clip = findClip(clipId);
+      if (!clip) return;
+      if (clip.type !== "video" && clip.type !== "audio") return;
+      const segs = segments
+        .map((s) => ({ start: Math.max(0, s.start), end: Math.min(clip.duration, s.end) }))
+        .filter((s) => s.end - s.start >= MIN_CLIP_DURATION)
+        .sort((a, b) => a.start - b.start);
+      if (!segs.length) return;
+      const baseTrim = (clip as { trimStart: number }).trimStart;
+      const pieces: Clip[] = [];
+      let cursor = clip.start; // 무음 제거 → 타임라인상 빈틈 없이 이어붙임
+      for (let i = 0; i < segs.length; i++) {
+        const dur = segs[i].end - segs[i].start;
+        const piece = {
+          ...clip,
+          id: i === 0 ? clip.id : uid("clp"),
+          start: cursor,
+          duration: dur,
+          name: i === 0 ? clip.name : `${clip.name} ${i + 1}`,
+        } as Clip;
+        (piece as { trimStart: number }).trimStart = baseTrim + segs[i].start;
+        pieces.push(piece);
+        cursor += dur;
+      }
+      commitProject({
+        ...state.project,
+        clips: state.project.clips.flatMap((c) => (c.id === clipId ? pieces : [c])),
+      });
+      set({ selectedIds: pieces.map((p) => p.id) });
+    },
+
     /* ─── 컷편집 ─── */
 
     /** 재생헤드 위치에서 자르기. 선택 클립이 걸쳐 있으면 그것만, 없으면 편집가능 트랙의 모든 해당 클립 */
@@ -668,6 +744,11 @@ export interface EditorActions {
   removeSelected: () => void;
   duplicateSelected: () => void;
   splitAt: (clipId: string, time: number) => void;
+  splitEvery: (clipId: string, interval: number) => void;
+  replaceClipWithSegments: (
+    clipId: string,
+    segments: { start: number; end: number }[],
+  ) => void;
   splitAtPlayhead: () => void;
   rippleDeleteSelected: () => void;
   copySelected: () => void;

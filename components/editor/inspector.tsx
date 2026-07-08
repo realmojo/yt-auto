@@ -7,10 +7,13 @@ import {
   Bold,
   Copy,
   Italic,
+  Loader2,
+  Scissors,
   Sparkles,
   SlidersHorizontal,
   Trash2,
   Volume2,
+  VolumeX,
 } from "lucide-react";
 import { useCallback, useState } from "react";
 
@@ -21,6 +24,7 @@ import {
 } from "@/lib/editor/constants";
 import { shallowArray, useActions, useEditor } from "@/lib/editor/store";
 import { TEMPLATES } from "@/lib/editor/templates";
+import { detectSpeechSegments } from "@/lib/editor/silence";
 import type { Align, Clip, VAlign } from "@/lib/editor/types";
 import { ScriptPanel } from "./script-panel";
 import { TtsPanel } from "./tts-panel";
@@ -267,6 +271,8 @@ function ClipPanel({ clip }: { clip: Clip }) {
       {(clip.type === "video" || clip.type === "audio") && (
         <AudioControls clip={clip} set={set} setLive={setLive} />
       )}
+      {(clip.type === "video" || clip.type === "audio") && <SplitControls clip={clip} />}
+      {(clip.type === "video" || clip.type === "audio") && <SilenceCutControls clip={clip} />}
 
       {clip.type !== "audio" && (
         <Section title="위치 / 크기">
@@ -540,6 +546,126 @@ function AudioControls({
 /* ───────── 공통 컨트롤 ───────── */
 
 const round1 = (n: number) => Math.round(n * 10) / 10;
+
+/** 균등 분할 — interval 초 간격으로 조각 나누기 (store.splitEvery 와 동일한 조각 계산) */
+function estimatePieces(total: number, seg: number): number {
+  const s = Math.max(0.2, seg);
+  const durs: number[] = [];
+  let r = total;
+  while (r > 1e-3) {
+    const d = Math.min(s, r);
+    durs.push(d);
+    r -= d;
+  }
+  if (durs.length >= 2 && durs[durs.length - 1] < 0.2) durs.pop();
+  return durs.length;
+}
+
+function SplitControls({ clip }: { clip: Extract<Clip, { type: "video" | "audio" }> }) {
+  const actions = useActions();
+  const [secs, setSecs] = useState(3);
+  const pieces = estimatePieces(clip.duration, secs);
+  const canSplit = pieces >= 2 && secs >= 0.2;
+  return (
+    <Section title="분할">
+      <div className="grid grid-cols-2 gap-2">
+        <Num
+          label="간격(초)"
+          value={secs}
+          step={0.5}
+          onChange={(v) => setSecs(Math.max(0.5, v))}
+        />
+        <div className="flex items-center rounded-lg border border-[#1d2845] bg-[#0a101f] px-2 text-[11px] text-slate-400">
+          길이 {round1(clip.duration)}초 → 약 {pieces}개
+        </div>
+      </div>
+      <button
+        onClick={() => actions.splitEvery(clip.id, secs)}
+        disabled={!canSplit}
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-indigo-600 py-2 text-[12px] font-semibold text-white transition hover:bg-indigo-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <Scissors className="size-3.5" />
+        {secs}초 간격으로 분할
+      </button>
+      <p className="text-[10px] leading-relaxed text-slate-600">
+        선택한 클립을 {secs}초씩 잘라 타임라인에 이어 붙입니다(원본은 끊김 없이 재생).
+      </p>
+    </Section>
+  );
+}
+
+/** 무음 자동 컷 — 음성/영상의 조용한 구간을 감지해 말하는 부분만 남기고 이어붙인다 */
+function SilenceCutControls({ clip }: { clip: Extract<Clip, { type: "video" | "audio" }> }) {
+  const actions = useActions();
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<string | null>(null);
+  const [minSilence, setMinSilence] = useState(0.35);
+  const [sensitivity, setSensitivity] = useState(2); // % (0.5~5) — RMS 임계값
+
+  const run = async () => {
+    setBusy(true);
+    setMsg("음성 분석 중…");
+    try {
+      const { segments } = await detectSpeechSegments(clip.src, {
+        minSilence,
+        threshold: sensitivity / 100,
+      });
+      // 소스 절대시간 → 현재 클립의 표시 범위로 자르고 클립-로컬(0=클립시작)로 변환
+      const from = clip.trimStart;
+      const to = clip.trimStart + clip.duration;
+      const local = segments
+        .map((s) => ({ start: Math.max(s.start, from) - from, end: Math.min(s.end, to) - from }))
+        .filter((s) => s.end - s.start >= 0.1);
+      if (!local.length) {
+        setMsg("말하는 구간을 찾지 못했습니다. 감도를 낮춰(작게) 다시 시도하세요.");
+        return;
+      }
+      const kept = local.reduce((a, s) => a + (s.end - s.start), 0);
+      actions.replaceClipWithSegments(clip.id, local);
+      setMsg(
+        `${local.length}개 구간 · ${round1(clip.duration)}초 → ${round1(kept)}초 (무음 ${round1(
+          clip.duration - kept,
+        )}초 제거)`,
+      );
+    } catch {
+      setMsg("오디오를 분석하지 못했습니다(디코드 불가). 다른 형식으로 시도하세요.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Section title="무음 자동 컷">
+      <div className="grid grid-cols-2 gap-2">
+        <Num
+          label="무음 길이(초)"
+          value={minSilence}
+          step={0.05}
+          onChange={(v) => setMinSilence(Math.max(0.1, v))}
+        />
+        <Num
+          label="감도(%)"
+          value={sensitivity}
+          step={0.5}
+          onChange={(v) => setSensitivity(Math.min(20, Math.max(0.2, v)))}
+        />
+      </div>
+      <button
+        onClick={run}
+        disabled={busy}
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-emerald-600 py-2 text-[12px] font-semibold text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {busy ? <Loader2 className="size-3.5 animate-spin" /> : <VolumeX className="size-3.5" />}
+        {busy ? "분석 중…" : "무음 구간 자동 컷"}
+      </button>
+      {msg && <p className="text-[10px] leading-relaxed text-slate-400">{msg}</p>}
+      <p className="text-[10px] leading-relaxed text-slate-600">
+        {minSilence}초 이상 조용한 구간을 잘라내고 말하는 부분만 이어 붙입니다. 너무 많이 잘리면
+        “무음 길이”를 키우고, 말이 잘리면 “감도”를 낮추세요.
+      </p>
+    </Section>
+  );
+}
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (

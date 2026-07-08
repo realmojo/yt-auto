@@ -2,12 +2,19 @@
 
 import {
   Captions,
+  Check,
   Circle,
+  Download,
   Film,
+  Heart,
   LayoutTemplate,
+  Loader2,
   Music,
+  Play,
   Plus,
+  Search,
   Shapes,
+  ShoppingBag,
   Square,
   Type,
   Upload,
@@ -178,6 +185,11 @@ function MediaTab() {
 
   return (
     <div className="space-y-3">
+      {/* 샤오홍수 · 타오바오 영상 검색 → 클릭하면 미디어 라이브러리에 추가 */}
+      <ShoppingSearch onImport={(asset) => actions.addAsset(asset)} />
+
+      <div className="h-px bg-[#141b2e]" />
+
       <button
         onClick={onPick}
         disabled={busy}
@@ -253,6 +265,306 @@ function MediaTab() {
       )}
     </div>
   );
+}
+
+/* ───────── 샤오홍수 · 타오바오 영상 검색 ───────── */
+
+type SearchItem = {
+  source: "rednote" | "taobao";
+  key: string;
+  id: string;
+  title: string;
+  cover: string; // 프록시 커버 URL
+  streamUrl: string; // 스트리밍 프록시 URL (없으면 재생/추가 불가)
+  videoRef: string;
+  downloaded: boolean;
+};
+
+const dlName = (v: SearchItem) =>
+  `${(v.title || v.id).replace(/[\\/:*?"<>|]+/g, "_").trim().slice(0, 50) || v.id}.mp4`;
+
+/** shopping 과 동일한 검색: 샤오홍수 7 + 타오바오(1페이지) 커버 수집 → 두 갤러리로 표시.
+ *  클릭하면 스트리밍 URL 로 미디어 라이브러리에 추가(다운로드 X). */
+function ShoppingSearch({ onImport }: { onImport: (asset: MediaAsset) => void }) {
+  const [q, setQ] = useState("");
+  const [phase, setPhase] = useState<"idle" | "searching" | "done" | "error">("idle");
+  const [status, setStatus] = useState("");
+  const [videos, setVideos] = useState<SearchItem[]>([]);
+  const [taobao, setTaobao] = useState<SearchItem[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [addingKey, setAddingKey] = useState<string | null>(null);
+  const [importedKeys, setImportedKeys] = useState<Set<string>>(new Set());
+
+  const searching = phase === "searching";
+
+  const loadVideos = async (kw: string) => {
+    try {
+      const r = await fetch(`/api/shopping/videos?keyword=${encodeURIComponent(kw)}`);
+      const j = await r.json();
+      setVideos(j.videos || []);
+      setTaobao(j.taobao || []);
+      return (j.videos?.length || 0) + (j.taobao?.length || 0);
+    } catch {
+      setVideos([]);
+      setTaobao([]);
+      return 0;
+    }
+  };
+
+  // ★ 통합 검색: 샤오홍수 7 + 타오바오 커버 수집(다운로드 X) — shopping/page.tsx 와 동일
+  const search = async () => {
+    const kw = q.trim();
+    if (!kw || searching) return;
+    setPhase("searching");
+    setError(null);
+    setVideos([]);
+    setTaobao([]);
+    setImportedKeys(new Set());
+    setStatus("샤오홍수 7개 · 타오바오 수집 중… (최초 1회 로그인 필요)");
+    try {
+      const res = await fetch("/api/shopping/search", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ keyword: kw, limit: 7 }),
+      });
+      if (!res.body) throw new Error("검색 스트림을 열지 못했습니다.");
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const parts = buf.split("\n\n");
+        buf = parts.pop() || "";
+        for (const p of parts) {
+          const line = p.replace(/^data: /, "").trim();
+          if (!line) continue;
+          const evt = JSON.parse(line);
+          if (evt.type === "log" && evt.line) setStatus(evt.line);
+          else if (evt.type === "error") throw new Error(evt.message || "검색 실패");
+        }
+      }
+      // 수집 종료 → 메타 조회
+      setStatus("결과 불러오는 중…");
+      const total = await loadVideos(kw);
+      setPhase("done");
+      setStatus(total ? "수집 완료 — 쓸 영상을 클릭해 추가하세요" : "결과가 없습니다. 로그인/키워드를 확인하세요.");
+    } catch (e) {
+      setError((e as Error).message);
+      setPhase("error");
+      setStatus("");
+    }
+  };
+
+  const importItem = async (it: SearchItem) => {
+    if (!it.streamUrl || addingKey) return;
+    setAddingKey(it.key);
+    try {
+      const asset = await loadRemoteVideoAsset(it.streamUrl, it.title || `${it.source}_${it.id}`);
+      onImport(asset);
+      setImportedKeys((s) => new Set(s).add(it.key));
+    } finally {
+      setAddingKey(null);
+    }
+  };
+
+  return (
+    <div className="space-y-2.5">
+      <div className="flex gap-1.5">
+        <div className="relative flex-1">
+          <Search className="pointer-events-none absolute left-2 top-1/2 size-3.5 -translate-y-1/2 text-slate-500" />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && search()}
+            placeholder="중국어 키워드로 영상 검색 (예: 电风扇)"
+            disabled={searching}
+            className="w-full rounded-lg border border-[#1b2440] bg-[#0a101f] py-2 pl-7 pr-2 text-[11px] text-slate-200 placeholder:text-slate-600 focus:border-indigo-500/60 focus:outline-none disabled:opacity-60"
+          />
+        </div>
+        <button
+          onClick={search}
+          disabled={searching || !q.trim()}
+          className="flex shrink-0 items-center justify-center rounded-lg bg-indigo-600 px-3 text-[11px] font-semibold text-white transition hover:bg-indigo-500 disabled:opacity-50"
+        >
+          {searching ? <Loader2 className="size-3.5 animate-spin" /> : "검색"}
+        </button>
+      </div>
+
+      {(searching || status) && !error && (
+        <p className="flex items-center gap-1.5 px-0.5 text-[10px] leading-relaxed text-slate-500">
+          {searching && <Loader2 className="size-3 shrink-0 animate-spin" />}
+          <span className="truncate">{status}</span>
+        </p>
+      )}
+      {error && (
+        <p className="rounded-lg border border-red-500/40 bg-red-500/10 px-2.5 py-2 text-[10px] leading-relaxed text-red-300">
+          {error}
+        </p>
+      )}
+
+      <ResultGallery
+        title="샤오홍수 (RedNote)"
+        icon={<Heart className="size-3 text-white" />}
+        accent="bg-rose-500"
+        items={videos}
+        empty="검색하면 샤오홍수 영상이 표시됩니다"
+        addingKey={addingKey}
+        importedKeys={importedKeys}
+        onImport={importItem}
+        show={phase !== "idle"}
+      />
+      <ResultGallery
+        title="타오바오 (상품 홍보영상)"
+        icon={<ShoppingBag className="size-3 text-white" />}
+        accent="bg-orange-500"
+        items={taobao}
+        empty="검색하면 타오바오 상품 영상이 표시됩니다"
+        addingKey={addingKey}
+        importedKeys={importedKeys}
+        onImport={importItem}
+        show={phase !== "idle"}
+      />
+    </div>
+  );
+}
+
+/** 커버 썸네일 갤러리(샤오홍수/타오바오 공통) — shopping 의 Gallery 와 동일한 카드 스타일 */
+function ResultGallery({
+  title,
+  icon,
+  accent,
+  items,
+  empty,
+  addingKey,
+  importedKeys,
+  onImport,
+  show,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  accent: string;
+  items: SearchItem[];
+  empty: string;
+  addingKey: string | null;
+  importedKeys: Set<string>;
+  onImport: (it: SearchItem) => void;
+  show: boolean;
+}) {
+  if (!show) return null;
+  return (
+    <div className="space-y-1.5">
+      <div className="flex items-center gap-1.5">
+        <span className={`flex size-5 items-center justify-center rounded ${accent}`}>{icon}</span>
+        <h4 className="text-[11px] font-bold text-slate-300">{title}</h4>
+        <span className="ml-auto text-[10px] text-slate-500">{items.length}개</span>
+      </div>
+      {items.length === 0 ? (
+        <div className="flex h-20 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[#1b2440] text-slate-600">
+          <Play className="size-4 opacity-40" />
+          <span className="px-2 text-center text-[10px]">{empty}</span>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-2">
+          {items.map((v) => {
+            const imported = importedKeys.has(v.key);
+            const adding = addingKey === v.key;
+            const playable = !!v.streamUrl;
+            return (
+              <div
+                key={v.key}
+                onClick={() => playable && onImport(v)}
+                title={playable ? `${v.title || v.id} — 미디어에 추가` : "재생 URL 없음"}
+                className={`group relative aspect-[9/16] overflow-hidden rounded-lg border-2 bg-black transition ${
+                  imported
+                    ? "border-emerald-500/70"
+                    : "border-transparent hover:border-indigo-500/60"
+                } ${playable ? "cursor-pointer" : "cursor-not-allowed opacity-60"} ${
+                  adding ? "pointer-events-none" : ""
+                }`}
+              >
+                {playable ? (
+                  <video
+                    src={v.streamUrl}
+                    poster={v.cover || undefined}
+                    muted
+                    loop
+                    playsInline
+                    preload="none"
+                    className="size-full object-cover"
+                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0;
+                    }}
+                  />
+                ) : v.cover ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={v.cover} alt={v.title} loading="lazy" className="size-full object-cover" />
+                ) : (
+                  <span className="flex size-full items-center justify-center px-1 text-center text-[9px] text-slate-500">
+                    {v.title || v.id}
+                  </span>
+                )}
+                {playable && (
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-70 transition group-hover:opacity-0">
+                    {adding ? (
+                      <Loader2 className="size-5 animate-spin text-white drop-shadow" />
+                    ) : imported ? (
+                      <Check className="size-6 text-emerald-400 drop-shadow" />
+                    ) : (
+                      <Play className="size-6 fill-white/80 text-white drop-shadow" />
+                    )}
+                  </span>
+                )}
+                {v.downloaded && (
+                  <span className="absolute bottom-6 left-1 z-10 rounded bg-emerald-500/90 px-1 text-[9px] font-medium text-white">
+                    받음
+                  </span>
+                )}
+                {playable && (
+                  <a
+                    href={v.streamUrl}
+                    download={dlName(v)}
+                    onClick={(e) => e.stopPropagation()}
+                    title="이 영상 다운로드"
+                    className="absolute right-1 top-1 z-20 flex size-6 items-center justify-center rounded-full bg-black/60 text-white opacity-0 transition hover:bg-black/85 group-hover:opacity-100"
+                  >
+                    <Download className="size-3" />
+                  </a>
+                )}
+                <span className="absolute inset-x-0 bottom-0 truncate bg-gradient-to-t from-black/80 to-transparent px-1.5 py-1 text-[9px] text-white">
+                  {v.title || v.id}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** 원격 스트리밍 영상(프록시 URL) → MediaAsset (메타데이터만 로드, 다운로드 X) */
+async function loadRemoteVideoAsset(url: string, name: string): Promise<MediaAsset> {
+  const meta = await new Promise<{ d: number; w: number; h: number }>((res) => {
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.muted = true;
+    v.onloadedmetadata = () => res({ d: v.duration, w: v.videoWidth, h: v.videoHeight });
+    v.onerror = () => res({ d: 0, w: 0, h: 0 });
+    v.src = url;
+  });
+  return {
+    id: uid("ast"),
+    kind: "video",
+    name: (name || "clip").slice(0, 40),
+    url,
+    duration: Number.isFinite(meta.d) ? meta.d : 0,
+    width: meta.w,
+    height: meta.h,
+  };
 }
 
 function ElementsTab() {
